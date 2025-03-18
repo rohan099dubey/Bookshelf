@@ -32,7 +32,7 @@ const connectDB = require("./config/db")
 // Initialize Express app
 const app = express()
 
-// Connect to MongoDB
+// Connect to MongoDB 
 connectDB()
 
 // Set view engine
@@ -59,6 +59,39 @@ app.use(helmet({
   },
 }))
 
+/******************************* */
+
+// Security middleware
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: [
+        "'self'",
+        "'unsafe-inline'",
+        "https://cdn.tailwindcss.com"  // If using Tailwind CDN
+      ],
+      styleSrc: [
+        "'self'",
+        "'unsafe-inline'",
+        "https://fonts.googleapis.com",
+        "https://cdnjs.cloudflare.com"
+      ],
+      fontSrc: [
+        "'self'",
+        "https://fonts.gstatic.com",
+        "https://cdnjs.cloudflare.com", // <-- ADD THIS
+      ],
+      imgSrc: [
+        "'self'",
+        "data:",
+        "https://res.cloudinary.com"
+      ],
+    },
+  },
+}));
+
+/******************************* */
 
 // Rate limiting for authentication routes
 const authLimiter = rateLimit({

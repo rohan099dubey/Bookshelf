@@ -38,10 +38,7 @@
       };
     </script>
     <!-- Font Awesome -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
-    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!-- Custom CSS -->
     <link rel="stylesheet" href="/css/style.css" />
   </head>
@@ -51,13 +48,13 @@
       <div class="container mx-auto flex justify-between items-center">
         <div class="flex items-center space-x-4">
           <a href="/contact" class="text-sm hover:text-primary">
-            <i class="fas fa-phone-alt mr-1"></i> +91 8530206759
+            <i class="fa-solid fa-phone-alt mr-1"></i> +91 8530206759
           </a>
           <a
             href="/contact"
             class="text-sm hover:text-primary hidden md:inline-block"
           >
-            <i class="fas fa-envelope mr-1"></i> support@bookish.in
+            <i class="fa-solid fa-envelope mr-1"></i> support@bookish.in
           </a>
         </div>
         <div class="flex items-center space-x-4">
@@ -101,7 +98,7 @@
                 type="submit"
                 class="bg-dark text-white px-4 py-2 rounded-r-md hover:bg-opacity-90"
               >
-                <i class="fas fa-search"></i>
+              <i class="fa-solid fa-magnifying-glass"></i>
               </button>
             </form>
           </div>
@@ -110,7 +107,7 @@
           <div class="flex items-center space-x-4">
             <% if (user) { %> <% if (user.role === 'buyer') { %>
             <a href="/buyer/cart" class="text-dark hover:text-accent relative">
-              <i class="fas fa-shopping-cart text-xl"></i>
+              <i class="fa-solid fa-cart-shopping"></i>
               <span
                 id="cart-count"
                 class="absolute -top-2 -right-2 bg-accent text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
@@ -118,15 +115,15 @@
               >
             </a>
             <a href="/buyer/library" class="text-dark hover:text-accent">
-              <i class="fas fa-book text-xl"></i>
+              <i class="fa-solid fa-book text-xl"></i>
             </a>
             <% } %>
             <div class="relative group">
               <button class="text-dark hover:text-accent">
-                <i class="fas fa-user-circle text-xl"></i>
+                <i class="fa-solid fa-user-circle text-xl"></i>
               </button>
               <div
-                class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden group-hover:block"
+                class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden  group-focus-within:block"
               >
                 <% if (user.role === 'buyer') { %>
                 <a
@@ -223,7 +220,7 @@
               type="submit"
               class="bg-dark text-white px-4 py-2 rounded-r-md hover:bg-opacity-90"
             >
-              <i class="fas fa-search"></i>
+              <i class="fa-solid fa-search"></i>
             </button>
           </form>
         </div>

@@ -10,7 +10,7 @@ module.exports = (passport) => {
     new LocalStrategy({ usernameField: "email" }, async (email, password, done) => {
       try {
         // Match user
-        const user = await User.findOne({ email }).select("+password")
+        const user = await User.findOne({ email }).select("+password") 
 
         if (!user) {
           return done(null, false, { message: "Invalid email or password" });

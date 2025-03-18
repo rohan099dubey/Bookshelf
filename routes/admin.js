@@ -194,7 +194,7 @@ router.get("/content", ensureAuthenticated, ensureAdmin, async (req, res) => {
       title: "Content Moderation - Bookish",
       pendingBooks,
       approvedBooks,
-      user: req.user,
+      user: req.user, 
     })
   } catch (err) {
     console.error(err)
