@@ -1,0 +1,115 @@
+/* Custom styles for Bookish */
+
+/* Primary color variables */
+:root { 
+  --primary-color: #ffe619;
+  --primary-dark: #e6cf17;
+  --secondary-color: #ffffff;
+  --dark-color: #333333;
+  --light-color: #f5f5f5;
+  --accent-color: #ff4500;
+}
+
+/* Global styles */
+body {
+  font-family: "Inter", sans-serif;
+  color: var(--dark-color);
+  background-color: var(--light-color);
+}
+
+/* Button hover effects */
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+}
+
+/* Card hover effects */
+.book-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.book-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Video feed styles */
+.video-card {
+  transition: transform 0.3s ease;
+}
+
+.video-card:hover {
+  transform: scale(1.02);
+}
+
+/* Used book badge */
+.used-badge {
+  position: relative;
+  border-radius: 4px;
+}
+
+.used-badge::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 20px 20px 0 0;
+  border-color: var(--accent-color) transparent transparent transparent;
+  border-top-left-radius: 4px;
+}
+
+/* Auto-advancing carousel */
+#carousel-inner {
+  transition: transform 0.5s ease-in-out;
+}
+
+/* Form focus styles */
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(255, 230, 25, 0.2);
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
