@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const visibleCards = 4 // Number of cards visible at once on desktop
 
   // Set initial position
-  updateCarousel()
+  updateCarousel() 
 
   // Auto advance every 8 seconds
   let interval = setInterval(() => {

@@ -196,7 +196,7 @@
     const quantityInput = document.getElementById('quantity');
     const decreaseBtn = document.getElementById('decrease-qty');
     const increaseBtn = document.getElementById('increase-qty');
-    const maxStock = <%= book.stock %>;
+    const maxStock =  book.stock ;
     
     decreaseBtn.addEventListener('click', function() {
       let currentValue = parseInt(quantityInput.value);

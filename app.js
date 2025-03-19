@@ -48,48 +48,9 @@ app.use(morgan("dev"))
 
 // Security middleware
 app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.tailwindcss.com"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
-      fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      imgSrc: ["'self'", "data:", "https://res.cloudinary.com"],
-    },
-  },
-}))
-
-/******************************* */
-
-// Security middleware
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: [
-        "'self'",
-        "'unsafe-inline'",
-        "https://cdn.tailwindcss.com"  // If using Tailwind CDN
-      ],
-      styleSrc: [
-        "'self'",
-        "'unsafe-inline'",
-        "https://fonts.googleapis.com",
-        "https://cdnjs.cloudflare.com"
-      ],
-      fontSrc: [
-        "'self'",
-        "https://fonts.gstatic.com",
-        "https://cdnjs.cloudflare.com", // <-- ADD THIS
-      ],
-      imgSrc: [
-        "'self'",
-        "data:",
-        "https://res.cloudinary.com"
-      ],
-    },
-  },
+  contentSecurityPolicy: false
 }));
+
 
 /******************************* */
 

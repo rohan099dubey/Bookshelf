@@ -198,7 +198,7 @@
     const salesChart = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: [<%= salesData.map(data => `'${data.month}'`).join(',') %>],
+        labels: [<%= salesData.map(data => `'${data.month}'`).join(',') %>], 
         datasets: [{
           label: 'Sales (₹)',
           data: [<%= salesData.map(data => data.sales).join(',') %>],

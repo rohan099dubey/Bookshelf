@@ -10,7 +10,7 @@ const { ensureAuthenticated, ensureSeller } = require("../middleware/auth")
 
 /**
  * @route   GET /seller/dashboard
- * @desc    Seller dashboard with sales analytics
+ * @desc    Seller dashboard with sales analytics 
  * @access  Private (Seller)
  */
 router.get("/dashboard", ensureAuthenticated, ensureSeller, async (req, res) => {
@@ -126,6 +126,7 @@ router.post("/upload", ensureAuthenticated, ensureSeller, async (req, res) => {
       condition,
       stock,
       format,
+      coverImageUrl,
     } = req.body
 
     // Validate required fields
@@ -133,6 +134,12 @@ router.post("/upload", ensureAuthenticated, ensureSeller, async (req, res) => {
       req.flash("error_msg", "Please fill in all required fields")
       return res.redirect("/seller/upload");
     }
+
+    let finalCoverImage =
+      coverImageUrl && coverImageUrl.trim() !== ""
+        ? coverImageUrl.trim()
+        : "https://nnpdev.wustl.edu/img/BookCovers/genericBookCover.jpg";
+        // https://static.wikia.nocookie.net/gijoe/images/b/bf/Default_book_cover.jpg/revision/latest/scale-to-width-down/340?cb=20120719182552
 
     // Create new book
     const newBook = new Book({
@@ -154,7 +161,7 @@ router.post("/upload", ensureAuthenticated, ensureSeller, async (req, res) => {
       // If book is used, set current seller as original owner
       originalOwner: condition === "used" ? req.user._id : null,
       // Default cover image
-      coverImage: "/img/books/default-cover.jpg",
+      coverImage: finalCoverImage,
     })
 
     await newBook.save()

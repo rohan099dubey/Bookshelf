@@ -77,7 +77,7 @@ const BookSchema = new mongoose.Schema({
   },
   format: {
     type: String,
-    enum: ["hardcover", "paperback", "ebook", "audiobook"],
+    enum: ["paperback", "hardcover", "ebook", "audiobook"],
     required: true,
   },
   isApproved: {

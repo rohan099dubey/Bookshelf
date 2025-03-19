@@ -406,5 +406,15 @@ router.get("/video-feed", ensureAuthenticated, ensureBuyer, (req, res) => {
   })
 })
 
+
+// routes/buyer.js
+
+
+// If you track the cart in session
+router.get("/api/cart/count", (req, res) => {
+  const cart = req.session.cart || [];
+  return res.json({ count: cart.length });
+});
+
 module.exports = router
 

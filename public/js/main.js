@@ -25,7 +25,18 @@ function updateCartCount() {
 
   if (cartCountElement) {
     // Fetch cart count from API
-    fetch("/api/cart/count")
+    fetch("/buyer/api/cart/count")
+      //******* */
+    .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok")
+        }
+        return response
+      })
+      .catch((error) => {
+        console.error("Error fetching cart count:", error)
+      })
+      //************* */
       .then((response) => response.json())
       .then((data) => {
         cartCountElement.textContent = data.count
@@ -109,7 +120,7 @@ function initTooltips() {
       }
     })
   })
-}
+} 
 
 /**
  * Adds an item to the cart

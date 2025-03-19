@@ -121,5 +121,24 @@ router.get("/contact", (req, res) => {
   })
 })
 
+/**
+ * @route   POST /contact/submit
+ * @desc    Process contact form
+ * @access  Public
+ */
+router.post("/contact/submit", (req, res) => {
+  const { name, email, subject, message } = req.body;
+  
+  // Here you would typically:
+  // 1. Validate the input
+  // 2. Store the message in your database
+  // 3. Send notification email
+  // 4. Send confirmation email to user
+  
+  // For now, just redirect with success message
+  req.flash("success_msg", "Thanks for your message! We'll get back to you soon.");
+  res.redirect("/contact");
+});
+
 module.exports = router
 
