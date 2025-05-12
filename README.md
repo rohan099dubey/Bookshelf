@@ -1,36 +1,88 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 📚 Bookshelf – Feature Overview
 
-## Getting Started
+Bookshelf is a comprehensive platform designed to bring together readers, students, and book lovers. Here's a complete and categorized list of features:
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🔹 Core Features (Already Built)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 🧑‍💼 Buyer Features
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+- Browse books by category, genre, or search
+- Add books to cart or personal library
+- Track reading progress & daily streaks
+- Access content based on subscription tiers
+- Upload & watch video reviews
+- File and track complaints
+- Manage profile (info, orders, addresses, reviews)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 🛍️ Seller Features
 
-## Learn More
+- Upload books with metadata and inventory
+- Manage orders, recent sales, and analytics dashboard
+- Track order status and buyer interactions
+- Submit platform-related complaints
 
-To learn more about Next.js, take a look at the following resources:
+### ⚙️ Admin Features
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- View, verify, and manage users
+- Moderate uploaded book content
+- Monitor all orders with breakdowns
+- View platform analytics (users, books, orders)
+- Handle and respond to all complaints
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## ✨ New & Upcoming Features
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 📖 Reader Engagement & Content
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Blog Column: Readers can write blogs about books
+- Book Recommendation Lists: Curated lists with upvotes
+- Dynamic Reader Reviews: Text + video-based reviews
+- Trending Books Section: Based on user activity
+- Progress Bars: Visual indicators on book cards
+
+### 💬 Communities & Interaction
+
+- Genre-Based Communities
+- Discussion Boards & Threads
+- Upvote System for blogs and lists
+- Invite Links for Communities
+
+### 🛒 E-Commerce & Trading
+
+- Peer-to-Peer E-Book Buying/Selling
+- Free & Paid Digital Goods
+- Secure Transactions
+
+---
+
+## 🎓 University Student-Focused Features
+
+### 🏫 University-Based Groups
+
+- Join/Create college-specific groups
+- Upload/share notes, lectures, study guides
+- Sell academic materials (past papers, PDFs)
+- Private/Public group settings
+- Q&A Boards, Discussions
+- Filter by department, year, subject
+
+---
+
+## 🛠️ Platform Enhancements (UI/UX & Backend)
+
+- Modular EJS partial templates (navbars, cards)
+- Role-Based Conditional Rendering
+- “Book of the Week” and “Recently Viewed” section
+- Markdown Support for Blogs
+- Animated Notifications
+- Avatar Initials for Users without Images
+- Smart Filters (genre, rating, university, etc.)
+
+---
+
+## 🚀 Stay Tuned!
+
+More features and improvements are being rolled out to make Bookshelf the ultimate reader and student hub!
