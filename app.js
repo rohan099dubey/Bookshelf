@@ -1,5 +1,6 @@
 /**
- * Bookish - Online Book Marketplace
+ * BOOKSHELF - Where Books Meet Community
+ * "Read. Share. Grow Together."
  * Main application entry point
  */
 
@@ -25,6 +26,16 @@ const buyerRoutes = require("./routes/buyer")
 const sellerRoutes = require("./routes/seller")
 const adminRoutes = require("./routes/admin")
 const publicRoutes = require("./routes/public")
+const { router: subscriptionRouter } = require('./routes/subscription');
+const libraryRouter = require('./routes/library');
+const videosRouter = require('./routes/videos');
+
+// Import new feature routes
+const blogRoutes = require("./routes/blog");
+const recommendationRoutes = require("./routes/recommendations");
+const genreGroupRoutes = require("./routes/genregroups");
+const ebookRoutes = require("./routes/ebooks");
+const universityRoutes = require("./routes/universities");
 
 // Import database connection
 const connectDB = require("./config/db")
@@ -94,10 +105,20 @@ app.use((req, res, next) => {
 
 // Routes
 app.use("/", publicRoutes)
+app.use('/subscription', subscriptionRouter);
+app.use('/library', libraryRouter);
+app.use('/videos', videosRouter);
 app.use("/auth", authLimiter, authRoutes)
 app.use("/buyer", buyerRoutes)
 app.use("/seller", sellerRoutes)
 app.use("/admin", adminRoutes)
+
+// New feature routes
+app.use("/blog", blogRoutes);
+app.use("/recommendations", recommendationRoutes);
+app.use("/groups", genreGroupRoutes);
+app.use("/ebooks", ebookRoutes);
+app.use("/universities", universityRoutes);
 
 // 404 handler
 app.use((req, res) => {
@@ -110,8 +131,11 @@ app.use((err, req, res, next) => {
   res.status(500).render("errors/500")
 })
 
+// Add this with the other model imports
+const Complaint = require('./models/Complaint');
+
 // Start server
-const PORT = process.env.PORT || 3000
+const PORT = 3000
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })

@@ -1,0 +1,362 @@
+<%- include('../partials/header') %>
+
+<div class="container mx-auto px-4 py-6">
+  <div class="mb-4">
+    <a href="/buyer/video-feed" class="text-blue-600 hover:text-blue-800 flex items-center">
+      <i class="fas fa-arrow-left mr-2"></i> Back to Videos
+    </a>
+  </div>
+  
+  <div class="flex flex-col lg:flex-row gap-8">
+    <!-- Main video content -->
+    <div class="lg:w-2/3">
+      <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+        <!-- Video player -->
+        <div class="relative w-full aspect-video">
+          <video 
+            id="video-player"
+            class="w-full h-full"
+            src="<%= video.videoUrl %>"
+            poster="<%= video.thumbnailUrl %>"
+            controls
+          ></video>
+        </div>
+        
+        <!-- Video info -->
+        <div class="p-4">
+          <h1 class="text-2xl font-semibold mb-2"><%= video.title %></h1>
+          <div class="flex justify-between items-center text-sm text-gray-600 mb-4">
+            <span><%= video.views %> views • <%= new Date(video.createdAt).toLocaleDateString() %></span>
+            <div class="flex space-x-6">
+              <button id="like-btn" class="flex items-center space-x-1 <%= video.likes.includes(user._id.toString()) ? 'text-blue-600' : '' %>">
+                <i class="<%= video.likes.includes(user._id.toString()) ? 'fas' : 'far' %> fa-thumbs-up"></i>
+                <span id="like-count"><%= video.likes.length %></span>
+              </button>
+              
+              <button id="share-btn" class="flex items-center space-x-1">
+                <i class="fas fa-share"></i>
+                <span>Share</span>
+              </button>
+              
+              <% if (video.user && video.user._id && video.user._id.toString() === user._id.toString()) { %>
+                <form action="/buyer/video-feed/delete/<%= video._id %>" method="POST" onsubmit="return confirm('Are you sure you want to delete this video? This action cannot be undone.')">
+                  <button type="submit" class="flex items-center text-red-600 hover:text-red-800">
+                    <i class="fas fa-trash-alt mr-1"></i>
+                    <span>Delete</span>
+                  </button>
+                </form>
+              <% } %>
+            </div>
+          </div>
+          
+          <!-- Uploader info -->
+          <div class="flex items-center border-t border-b border-gray-200 py-4">
+            <img 
+              src="<%= (video.user && video.user.avatar) ? video.user.avatar : '/img/users/default-avatar.jpg' %>" 
+              alt="<%= (video.user && video.user.name) ? video.user.name : 'Unknown User' %>"
+              class="w-12 h-12 rounded-full mr-3"
+            >
+            <div>
+              <p class="font-medium"><%= (video.user && video.user.name) ? video.user.name : 'Unknown User' %></p>
+              <p class="text-gray-600 text-sm">Reviewer</p>
+            </div>
+          </div>
+          
+          <!-- Description -->
+          <div class="py-4">
+            <p class="text-gray-800 whitespace-pre-wrap"><%= video.description %></p>
+            <% if (video.tags && video.tags.length > 0) { %>
+              <div class="mt-2 flex flex-wrap gap-2">
+                <% video.tags.forEach(tag => { %>
+                  <span class="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded">#<%= tag %></span>
+                <% }) %>
+              </div>
+            <% } %>
+          </div>
+          
+          <!-- Book info -->
+          <% if (video.book) { %>
+            <div class="border-t border-gray-200 pt-4">
+              <a href="/book/<%= video.book._id %>" class="flex items-start hover:bg-gray-50 p-2 rounded">
+                <img 
+                  src="<%= video.book.coverImage || '/img/books/default-cover.jpg' %>" 
+                  alt="<%= video.book.title %>"
+                  class="w-16 h-24 object-cover rounded mr-3"
+                >
+                <div>
+                  <p class="font-medium"><%= video.book.title %></p>
+                  <p class="text-gray-600">by <%= video.book.author %></p>
+                  <button class="mt-2 px-3 py-1 bg-primary text-dark text-sm rounded hover:bg-opacity-90">
+                    View Book
+                  </button>
+                </div>
+              </a>
+            </div>
+          <% } %>
+        </div>
+      </div>
+      
+      <!-- Comments section -->
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-semibold mb-4"><%= comments.length %> Comments</h2>
+        
+        <!-- Comment input -->
+        <div class="flex mb-6">
+          <img 
+            src="<%= user.avatar || '/img/users/default-avatar.jpg' %>" 
+            alt="<%= user.name %>"
+            class="w-10 h-10 rounded-full mr-3"
+          >
+          <div class="flex-grow">
+            <textarea 
+              id="comment-input" 
+              class="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Add a comment..."
+              rows="2"
+            ></textarea>
+            <div class="flex justify-end mt-2">
+              <button 
+                id="post-comment-btn"
+                class="bg-primary text-dark px-4 py-2 rounded-md hover:bg-opacity-90"
+              >
+                Comment
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Comments list -->
+        <div id="comments-container">
+          <% if (comments.length === 0) { %>
+            <p class="text-center text-gray-500 py-8">Be the first to comment!</p>
+          <% } else { %>
+            <% comments.forEach(comment => { %>
+              <div class="flex py-4 border-b border-gray-100" data-comment-id="<%= comment._id %>">
+                <img 
+                  src="<%= (comment.user && comment.user.avatar) ? comment.user.avatar : '/img/users/default-avatar.jpg' %>" 
+                  alt="<%= (comment.user && comment.user.name) ? comment.user.name : 'Unknown User' %>"
+                  class="w-10 h-10 rounded-full mr-3"
+                >
+                <div>
+                  <div class="flex items-center">
+                    <p class="font-medium"><%= (comment.user && comment.user.name) ? comment.user.name : 'Unknown User' %></p>
+                    <span class="text-gray-500 text-sm ml-2"><%= new Date(comment.createdAt).toLocaleDateString() %></span>
+                  </div>
+                  <p class="mt-1 text-gray-800"><%= comment.content %></p>
+                </div>
+              </div>
+            <% }) %>
+          <% } %>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Related videos -->
+    <div class="lg:w-1/3">
+      <h2 class="text-xl font-semibold mb-4">Related Videos</h2>
+      
+      <div class="space-y-4">
+        <% if (relatedVideos && relatedVideos.length > 0) { %>
+          <% relatedVideos.forEach(related => { %>
+            <!-- Update related videos links -->
+            <a href="/buyer/video-feed/watch/<%= related._id %>" class="flex bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
+              <div class="w-1/3 relative">
+                <img 
+                  src="<%= related.thumbnailUrl || '/img/default-thumbnail.jpg' %>" 
+                  alt="<%= related.title %>"
+                  class="w-full h-24 object-cover"
+                >
+                <span class="absolute bottom-1 right-1 bg-black bg-opacity-70 text-white text-xs px-1 rounded">
+                  <%= related.duration ? `${Math.floor(related.duration / 60)}:${(related.duration % 60).toString().padStart(2, '0')}` : '0:00' %>
+                </span>
+              </div>
+              <div class="w-2/3 p-3">
+                <h3 class="font-medium text-sm line-clamp-2"><%= related.title %></h3>
+                <div class="flex items-center mt-1">
+                  <img 
+                    src="<%= (related.user && related.user.avatar) ? related.user.avatar : '/img/users/default-avatar.jpg' %>" 
+                    alt="<%= (related.user && related.user.name) ? related.user.name : 'Unknown User' %>"
+                    class="w-4 h-4 rounded-full mr-1"
+                  >
+                  <span class="text-xs text-gray-600"><%= (related.user && related.user.name) ? related.user.name : 'Unknown User' %></span>
+                </div>
+                <p class="text-xs text-gray-500 mt-1"><%= related.views || 0 %> views</p>
+              </div>
+            </a>
+          <% }) %>
+        <% } else { %>
+          <p class="text-gray-500 text-center p-4 bg-white rounded-lg shadow-md">No related videos found</p>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Share Modal -->
+<div id="share-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+  <div class="bg-white rounded-lg p-6 max-w-md w-full">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-xl font-semibold">Share this video</h3>
+      <button id="close-share-modal" class="text-gray-400 hover:text-gray-600">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="mb-4">
+      <p class="text-gray-600 mb-2">Copy link</p>
+      <div class="flex">
+        <input 
+          type="text" 
+          id="share-url" 
+          value="<%= `${req.protocol}://${req.get('host')}/videos/watch/${video._id}` %>" 
+          class="flex-grow border border-gray-300 rounded-l-md px-3 py-2 focus:outline-none focus:ring-blue-500" 
+          readonly
+        >
+        <button id="copy-btn" class="bg-blue-500 text-white px-4 py-2 rounded-r-md hover:bg-blue-600">
+          Copy
+        </button>
+      </div>
+    </div>
+    
+    <div>
+      <p class="text-gray-600 mb-2">Share on</p>
+      <div class="flex space-x-4">
+        <a href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent(`${req.protocol}://${req.get('host')}/videos/watch/${video._id}`) %>" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 text-2xl">
+          <i class="fab fa-facebook-square"></i>
+        </a>
+        <a href="https://twitter.com/intent/tweet?url=<%= encodeURIComponent(`${req.protocol}://${req.get('host')}/videos/watch/${video._id}`) %>&text=<%= encodeURIComponent(video.title) %>" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-600 text-2xl">
+          <i class="fab fa-twitter"></i>
+        </a>
+        <a href="https://api.whatsapp.com/send?text=<%= encodeURIComponent(`${video.title} - ${req.protocol}://${req.get('host')}/videos/watch/${video._id}`) %>" target="_blank" rel="noopener noreferrer" class="text-green-500 hover:text-green-700 text-2xl">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const videoId = '<%= video._id %>';
+    const likeBtn = document.getElementById('like-btn');
+    const likeCount = document.getElementById('like-count');
+    const shareBtn = document.getElementById('share-btn');
+    const shareModal = document.getElementById('share-modal');
+    const closeShareModal = document.getElementById('close-share-modal');
+    const copyBtn = document.getElementById('copy-btn');
+    const shareUrl = document.getElementById('share-url');
+    const commentInput = document.getElementById('comment-input');
+    const postCommentBtn = document.getElementById('post-comment-btn');
+    const commentsContainer = document.getElementById('comments-container');
+    
+    // Like functionality
+    likeBtn.addEventListener('click', async function() {
+      try {
+        const response = await fetch(`/buyer/video-feed/like/${videoId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          likeCount.textContent = data.likeCount;
+          
+          if (data.liked) {
+            likeBtn.classList.add('text-blue-600');
+            likeBtn.querySelector('i').classList.remove('far');
+            likeBtn.querySelector('i').classList.add('fas');
+          } else {
+            likeBtn.classList.remove('text-blue-600');
+            likeBtn.querySelector('i').classList.remove('fas');
+            likeBtn.querySelector('i').classList.add('far');
+          }
+        }
+      } catch (error) {
+        console.error('Error liking video:', error);
+      }
+    });
+    
+    // Share functionality
+    shareBtn.addEventListener('click', function() {
+      shareModal.classList.remove('hidden');
+    });
+    
+    closeShareModal.addEventListener('click', function() {
+      shareModal.classList.add('hidden');
+    });
+    
+    shareModal.addEventListener('click', function(e) {
+      if (e.target === shareModal) {
+        shareModal.classList.add('hidden');
+      }
+    });
+    
+    copyBtn.addEventListener('click', function() {
+      shareUrl.select();
+      document.execCommand('copy');
+      copyBtn.textContent = 'Copied!';
+      setTimeout(() => {
+        copyBtn.textContent = 'Copy';
+      }, 2000);
+    });
+    
+    // Comment functionality
+    postCommentBtn.addEventListener('click', async function() {
+      const content = commentInput.value.trim();
+      
+      if (!content) return;
+      
+      try {
+        const response = await fetch(`/buyer/video-feed/comment/${videoId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ content })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          // Clear input
+          commentInput.value = '';
+          
+          // Add new comment to DOM
+          const newComment = document.createElement('div');
+          newComment.className = 'flex py-4 border-b border-gray-100';
+          newComment.setAttribute('data-comment-id', data.comment._id);
+          
+          newComment.innerHTML = `
+            <img 
+              src="${data.comment.user.avatar || '/img/users/default-avatar.jpg'}" 
+              alt="${data.comment.user.name || 'Unknown User'}"
+              class="w-10 h-10 rounded-full mr-3"
+            >
+            <div>
+              <div class="flex items-center">
+                <p class="font-medium">${data.comment.user.name || 'Unknown User'}</p>
+                <span class="text-gray-500 text-sm ml-2">Just now</span>
+              </div>
+              <p class="mt-1 text-gray-800">${data.comment.content}</p>
+            </div>
+          `;
+          
+          // Add to container
+          if (commentsContainer.querySelector('p.text-center')) {
+            // Remove "be the first" message if it exists
+            commentsContainer.innerHTML = '';
+          }
+          
+          commentsContainer.insertBefore(newComment, commentsContainer.firstChild);
+        }
+      } catch (error) {
+        console.error('Error posting comment:', error);
+      }
+    });
+  });
+</script>
+
+<%- include('../partials/footer') %>

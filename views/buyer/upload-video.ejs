@@ -1,0 +1,176 @@
+<%- include('../partials/header') %>
+
+<div class="container mx-auto px-4 py-6">
+  <div class="mb-6">
+    <a href="/buyer/video-feed" class="text-blue-600 hover:text-blue-800 flex items-center">
+      <i class="fas fa-arrow-left mr-2"></i> Back to Videos
+    </a>
+  </div>
+
+  <div class="max-w-2xl mx-auto">
+    <h1 class="text-3xl font-bold mb-6">Upload Book Review Video</h1>
+    
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <form action="/videos/upload" method="POST" enctype="multipart/form-data">
+        <div class="mb-4">
+          <label for="title" class="block text-gray-700 font-bold mb-2">Video Title*</label>
+          <input 
+            type="text" 
+            id="title" 
+            name="title" 
+            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          >
+        </div>
+        
+        <div class="mb-4">
+          <label for="description" class="block text-gray-700 font-bold mb-2">Description</label>
+          <textarea 
+            id="description" 
+            name="description" 
+            rows="4" 
+            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          ></textarea>
+        </div>
+        
+        <div class="mb-4">
+          <label for="bookId" class="block text-gray-700 font-bold mb-2">Select Book*</label>
+          <select 
+            id="bookId" 
+            name="bookId" 
+            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          >
+            <option value="" disabled selected>Choose a book</option>
+            <% books.forEach(book => { %>
+              <option value="<%= book._id %>"><%= book.title %> by <%= book.author %></option>
+            <% }); %>
+          </select>
+        </div>
+        
+        <div class="mb-4">
+          <label for="tags" class="block text-gray-700 font-bold mb-2">Tags (comma separated)</label>
+          <input 
+            type="text" 
+            id="tags" 
+            name="tags" 
+            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="review, fiction, fantasy"
+          >
+        </div>
+        
+        <div class="mb-6">
+          <label class="block text-gray-700 font-bold mb-2">Video File* (Max 50MB)</label>
+          <div 
+            id="upload-zone" 
+            class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-500 transition"
+          >
+            <input type="file" id="video" name="video" accept="video/*" class="hidden" required>
+            <label for="video" class="cursor-pointer">
+              <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-3"></i>
+              <p class="text-gray-600">Drag and drop your video here or click to browse</p>
+              <p class="text-gray-500 text-sm">Supports: MP4, WebM, MOV (Max 50MB)</p>
+            </label>
+          </div>
+          
+          <div id="video-preview" class="mt-4 hidden">
+            <div class="bg-gray-100 p-4 rounded-lg">
+              <div class="flex items-center">
+                <i class="fas fa-video text-2xl text-blue-500 mr-3"></i>
+                <div class="flex-grow">
+                  <p id="file-name" class="font-medium"></p>
+                  <p id="file-size" class="text-sm text-gray-600"></p>
+                </div>
+                <button type="button" id="remove-video" class="text-red-500 hover:text-red-700">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="flex justify-end">
+          <button type="button" class="bg-gray-300 text-gray-800 px-6 py-2 rounded-md mr-3 hover:bg-gray-400" onclick="window.location.href='/buyer/video-feed'">
+            Cancel
+          </button>
+          <button type="submit" id="submit-btn" class="bg-primary text-dark px-6 py-2 rounded-md hover:bg-opacity-90">
+            Upload Video
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const videoInput = document.getElementById('video');
+    const videoPreview = document.getElementById('video-preview');
+    const fileName = document.getElementById('file-name');
+    const fileSize = document.getElementById('file-size');
+    const uploadZone = document.getElementById('upload-zone');
+    const removeVideo = document.getElementById('remove-video');
+    const submitBtn = document.getElementById('submit-btn');
+    
+    // Handle file selection
+    videoInput.addEventListener('change', function(e) {
+      handleFile(e.target.files[0]);
+    });
+    
+    // Handle drag and drop
+    uploadZone.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      uploadZone.classList.add('border-blue-500');
+      uploadZone.classList.add('bg-blue-50');
+    });
+    
+    uploadZone.addEventListener('dragleave', function() {
+      uploadZone.classList.remove('border-blue-500');
+      uploadZone.classList.remove('bg-blue-50');
+    });
+    
+    uploadZone.addEventListener('drop', function(e) {
+      e.preventDefault();
+      uploadZone.classList.remove('border-blue-500');
+      uploadZone.classList.remove('bg-blue-50');
+      
+      const file = e.dataTransfer.files[0];
+      if (file && file.type.startsWith('video/')) {
+        videoInput.files = e.dataTransfer.files;
+        handleFile(file);
+      }
+    });
+    
+    // Remove selected file
+    removeVideo.addEventListener('click', function() {
+      videoInput.value = '';
+      videoPreview.classList.add('hidden');
+      submitBtn.disabled = false;
+    });
+    
+    function handleFile(file) {
+      if (!file) return;
+      
+      // Check if file is a video
+      if (!file.type.startsWith('video/')) {
+        alert('Please select a video file');
+        return;
+      }
+      
+      // Check file size (50MB max)
+      if (file.size > 50 * 1024 * 1024) {
+        alert('File is too large! Maximum size is 50MB');
+        submitBtn.disabled = true;
+        return;
+      }
+      
+      // Display file details
+      fileName.textContent = file.name;
+      fileSize.textContent = `${(file.size / (1024 * 1024)).toFixed(2)} MB`;
+      videoPreview.classList.remove('hidden');
+      submitBtn.disabled = false;
+    }
+  });
+</script>
+
+<%- include('../partials/footer') %>

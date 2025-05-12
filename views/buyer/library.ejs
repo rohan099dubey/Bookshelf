@@ -1,142 +1,481 @@
 <%- include('../partials/header') %>
+<!-- Add these meta tags right after the header include -->
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
 
-<div class="container mx-auto px-4">
-  <h1 class="text-3xl font-bold mb-6">Your Library</h1>
-  
-  <% if (!books || books.length === 0) { %>
-    <div class="bg-white p-8 rounded-lg shadow-md text-center">
-      <i class="fas fa-book text-5xl text-gray-300 mb-4"></i>
-      <h2 class="text-2xl font-semibold mb-2">Your library is empty</h2>
-      <p class="text-gray-600 mb-6">Looks like you haven't purchased any books yet.</p>
-      <a href="/buyer/browse" class="bg-primary text-dark px-6 py-3 rounded-md hover:bg-opacity-90 transition">
-        Browse Books
-      </a>
+<!-- Library Hero Section -->
+<section class="relative py-12 mb-8 bg-primary bg-opacity-40">
+  <div class="absolute inset-0 opacity-10 z-0">
+    <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+      <defs>
+        <pattern id="bookshelf" patternUnits="userSpaceOnUse" width="100" height="100">
+          <path d="M0 10 H100 M0 30 H100 M0 50 H100 M0 70 H100 M0 90 H100" stroke="currentColor" stroke-width="1.5"/>
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#bookshelf)"/>
+    </svg>
+  </div>
+
+  <div class="container mx-auto px-4 py-6 relative z-10">
+    <div class="flex flex-col md:flex-row justify-between items-center mb-4">
+      <div>
+        <span class="inline-block px-4 py-1 rounded-full bg-dark bg-opacity-20 text-dark font-medium text-sm mb-3 backdrop-blur-sm">Personal Collection</span>
+        <h1 class="text-3xl md:text-4xl font-bold text-dark drop-shadow-sm">My Library</h1>
+      </div>
+      
+      <% if (typeof hasSubscription !== 'undefined' && !hasSubscription) { %>
+        <a href="/pricing" class="bg-dark text-white px-6 py-3 rounded-md hover:bg-opacity-90 transition mt-4 md:mt-0 transform hover:-translate-y-1 shadow-md">
+          <i class="fas fa-crown mr-2"></i> Get Subscription
+        </a>
+      <% } %>
     </div>
-  <% } else { %>
-    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-      <div class="flex flex-col md:flex-row justify-between items-center mb-6">
-        <h2 class="text-2xl font-semibold">Your Reading Progress</h2>
-        <div class="mt-4 md:mt-0">
-          <select class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary">
-            <option value="all">All Books</option>
-            <option value="reading">Currently Reading</option>
-            <option value="completed">Completed</option>
-            <option value="not-started">Not Started</option>
-          </select>
+  </div>
+</section>
+
+<div class="container mx-auto px-4 pb-12">
+  <% if (typeof hasSubscription !== 'undefined' && !hasSubscription) { %>
+    <div class="bg-amber-100 border-l-4 border-amber-500 text-amber-700 p-4 mb-8 rounded-r">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <i class="fas fa-exclamation-circle"></i>
+        </div>
+        <div class="ml-3">
+          <p class="text-sm">
+            You need an active subscription to access e-books and audiobooks.
+            <a href="/pricing" class="font-medium underline hover:text-amber-800 transition">View subscription plans</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  <% } %>
+  
+  <% if (typeof hasSubscription !== 'undefined' && hasSubscription) { %>
+    <!-- Reading Stats Dashboard -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+      <div class="bg-white rounded-lg shadow-md p-5 flex items-center hover:shadow-lg transition transform hover:-translate-y-1 border-t-4 border-blue-500">
+        <div class="rounded-full bg-blue-100 p-3 mr-4">
+          <i class="fas fa-book text-blue-600 text-xl"></i>
+        </div>
+        <div>
+          <p class="text-sm text-gray-600">Books in Library</p>
+          <h3 class="text-2xl font-bold"><%= library.length %></h3>
         </div>
       </div>
       
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <% books.forEach(book => { %>
-          <div class="border border-gray-200 rounded-lg overflow-hidden">
-            <div class="flex p-4">
-              <img src="<%= book.coverImage %>" alt="<%= book.title %>" class="w-20 h-28 object-cover rounded mr-4">
-              <div class="flex-grow">
-                <h3 class="font-semibold mb-1 truncate"><%= book.title %></h3>
-                <p class="text-gray-600 text-sm mb-2"><%= book.author %></p>
-                <div class="flex items-center text-sm text-gray-600 mb-2">
-                  <i class="far fa-calendar-alt mr-1"></i>
-                  <span>Purchased: <%= new Date(book.purchaseDate).toLocaleDateString() %></span>
+      <div class="bg-white rounded-lg shadow-md p-5 flex items-center hover:shadow-lg transition transform hover:-translate-y-1 border-t-4 border-green-500">
+        <div class="rounded-full bg-green-100 p-3 mr-4">
+          <i class="fas fa-book-open text-green-600 text-xl"></i>
+        </div>
+        <div>
+          <p class="text-sm text-gray-600">Books Completed</p>
+          <h3 class="text-2xl font-bold"><%= library.filter(item => item.progress === 100).length %></h3>
+        </div>
+      </div>
+      
+      <div class="bg-white rounded-lg shadow-md p-5 flex items-center hover:shadow-lg transition transform hover:-translate-y-1 border-t-4 border-purple-500">
+        <div class="rounded-full bg-purple-100 p-3 mr-4">
+          <i class="fas fa-fire-alt text-purple-600 text-xl"></i>
+        </div>
+        <div>
+          <p class="text-sm text-gray-600">Reading Streak</p>
+          <h3 class="text-2xl font-bold">0 days</h3>
+        </div>
+      </div>
+      
+      <div class="bg-white rounded-lg shadow-md p-5 flex items-center hover:shadow-lg transition transform hover:-translate-y-1 border-t-4 border-amber-500">
+        <div class="rounded-full bg-amber-100 p-3 mr-4">
+          <i class="fas fa-crown text-amber-600 text-xl"></i>
+        </div>
+        <div>
+          <p class="text-sm text-gray-600">Subscription</p>
+          <h3 class="text-2xl font-bold"><%= subscription.plan ? (subscription.plan.charAt(0).toUpperCase() + subscription.plan.slice(1)) : "Active" %></h3>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Continue Reading Section -->
+    <% if (library.length > 0) { %>
+      <div class="mb-12">
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold flex items-center">
+              <span class="bg-primary bg-opacity-20 text-dark p-2 rounded-full mr-3">
+                <i class="fas fa-bookmark"></i>
+              </span>
+              Continue Reading
+            </h2>
+            <a href="#all-books" class="text-primary hover:underline text-sm font-medium flex items-center">
+              View all books <i class="fas fa-arrow-right ml-1"></i>
+            </a>
+          </div>
+          
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
+            <% 
+              const recentlyRead = library
+                .filter(item => item.progress > 0 && item.progress < 100)
+                .sort((a, b) => new Date(b.lastAccessed) - new Date(a.lastAccessed))
+                .slice(0, 6);
+                
+              if(recentlyRead.length > 0) {
+                recentlyRead.forEach(item => { 
+            %>
+              <div class="bg-white rounded-lg shadow-md overflow-hidden book-card">
+                <div class="relative">
+                  <div class="book-image-container">
+                    <img src="<%= item.book.coverImage %>" alt="<%= item.book.title %>" class="book-cover">
+                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-3">
+                      <div class="relative w-full bg-gray-300 rounded-full h-1.5">
+                        <div class="bg-blue-600 h-1.5 rounded-full progress-bar" data-progress="<%= item.progress %>"></div>
+                      </div>
+                      <p class="text-white text-xs mt-1"><%= item.progress %>% complete</p>
+                    </div>
+                  </div>
                 </div>
-                <div class="w-full bg-gray-200 rounded-full h-2.5">
-                  <div class="bg-primary h-2.5 rounded-full" style="width: <%= book.progress %>%"></div> 
+                <div class="book-info">
+                  <h3 class="book-title"><%= item.book.title %></h3>
+                  <p class="book-author"><%= item.book.author %></p>
+                  <div class="flex justify-between items-center">
+                    <span class="text-xs text-gray-500">
+                      <i class="far fa-clock mr-1"></i>
+                      <%= new Date(item.lastAccessed).toLocaleDateString() %>
+                    </span>
+                    <a href="/library/read/<%= item.book._id %>" class="add-bag-btn">
+                      Continue
+                    </a>
+                  </div>
                 </div>
-                <div class="flex justify-between text-xs mt-1">
-                  <span><%= book.progress %>% complete</span>
-                  <% if (book.progress === 100) { %>
-                    <span class="text-green-600">Completed</span>
-                  <% } else if (book.progress > 0) { %>
-                    <span class="text-blue-600">In Progress</span>
-                  <% } else { %>
-                    <span class="text-gray-600">Not Started</span>
+              </div>
+            <% })} else { %>
+              <div class="col-span-full text-center py-10 bg-white rounded-lg">
+                <div class="text-4xl text-gray-300 mb-3">
+                  <i class="fas fa-book-open"></i>
+                </div>
+                <p class="text-gray-500">You haven't started reading any books yet.</p>
+                <a href="/buyer/browse" class="mt-4 inline-block text-primary hover:underline">Find your next read</a>
+              </div>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    <% } %>
+  
+    <!-- All Books Section -->
+    <div id="all-books" class="bg-white p-6 rounded-lg shadow-md">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold flex items-center">
+          <span class="bg-primary bg-opacity-20 text-dark p-2 rounded-full mr-3">
+            <i class="fas fa-books"></i>
+          </span>
+          My Collection
+        </h2>
+        <a href="/buyer/browse" class="bg-primary text-dark px-4 py-2 rounded-full hover:bg-opacity-80 transition text-sm">
+          <i class="fas fa-plus mr-1"></i> Add Books
+        </a>
+      </div>
+      
+      <% if (library.length === 0) { %>
+        <div class="bg-light rounded-lg p-8 text-center">
+          <div class="text-6xl text-gray-300 mb-4">
+            <i class="fas fa-book"></i>
+          </div>
+          <h2 class="text-2xl font-bold mb-2">Your library is empty</h2>
+          <p class="text-gray-600 mb-6">Start adding books to build your digital collection</p>
+          <a href="/buyer/browse" class="bg-primary text-dark px-6 py-3 rounded-md hover:bg-opacity-90 transition transform hover:-translate-y-1 shadow-md inline-block">
+            <i class="fas fa-search mr-2"></i> Browse Books
+          </a>
+        </div>
+      <% } else { %>
+        <!-- Filters -->
+        <div class="flex flex-wrap gap-2 mb-6">
+          <button class="filter-btn active" data-filter="all">All Books</button>
+          <button class="filter-btn" data-filter="ebook">E-Books</button>
+          <button class="filter-btn" data-filter="audiobook">Audiobooks</button>
+          <button class="filter-btn" data-filter="completed">Completed</button>
+          <button class="filter-btn" data-filter="reading">Currently Reading</button>
+        </div>
+        
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-4" id="book-collection">
+          <% library.sort((a, b) => new Date(b.addedAt) - new Date(a.addedAt)).forEach(item => { %>
+            <div class="bg-white rounded-lg shadow-md overflow-hidden book-card" 
+                 data-format="<%= item.book.format %>" 
+                 data-progress="<%= item.progress %>"
+                 data-status="<%= item.progress === 0 ? 'unread' : (item.progress === 100 ? 'completed' : 'reading') %>">
+              <a href="/library/read/<%= item.book._id %>" class="block">
+                <div class="book-image-container">
+                  <img src="<%= item.book.coverImage %>" alt="<%= item.book.title %>" class="book-cover">
+                  <div class="absolute top-0 right-0 bg-primary text-dark m-2 px-2 py-1 rounded text-xs font-bold">
+                    <%= item.book.format === 'ebook' ? 'E-Book' : 'Audiobook' %>
+                  </div>
+                  
+                  <% if (item.progress > 0) { %>
+                    <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 px-2 py-1.5">
+                      <div class="w-full bg-gray-300 rounded-full h-1">
+                        <div class="bg-green-500 h-1 rounded-full progress-bar" data-progress="<%= item.progress %>"></div>
+                      </div>
+                    </div>
                   <% } %>
                 </div>
+              </a>
+              
+              <div class="book-info">
+                <h3 class="book-title"><%= item.book.title %></h3>
+                <p class="book-author"><%= item.book.author %></p>
+                
+                <div class="flex justify-between items-center text-xs text-gray-500 mb-2">
+                  <span><i class="far fa-calendar-plus mr-1"></i> <%= new Date(item.addedAt).toLocaleDateString() %></span>
+                  <span><i class="far fa-eye mr-1"></i> <%= item.accessCount || 0 %></span>
+                </div>
+                
+                <div class="action-buttons">
+                  <a href="/library/read/<%= item.book._id %>" class="add-bag-btn">
+                    Read
+                  </a>
+                  <form action="/library/remove/<%= item._id %>" method="POST" class="inline" onsubmit="return confirm('Remove this book from your library?');">
+                    <button type="submit" class="wishlist-btn">
+                      <i class="fas fa-trash-alt"></i>
+                    </button>
+                  </form>
+                </div>
               </div>
             </div>
-            <div class="bg-gray-50 p-3 border-t border-gray-200 flex justify-between">
-              <a href="#" class="text-primary hover:text-dark text-sm">
-                <i class="fas fa-book-open mr-1"></i> Continue Reading
-              </a>
-              <a href="#" class="text-gray-600 hover:text-dark text-sm">
-                <i class="fas fa-info-circle mr-1"></i> Details
-              </a>
-            </div>
-          </div>
-        <% }) %>
-      </div>
-    </div>
-    
-    <!-- Reading Stats -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-      <div class="bg-white rounded-lg shadow-md p-6">
-        <div class="flex items-center mb-4">
-          <div class="bg-primary rounded-full w-12 h-12 flex items-center justify-center mr-4">
-            <i class="fas fa-book text-xl text-dark"></i>
-          </div>
-          <div>
-            <h3 class="text-lg font-semibold">Total Books</h3>
-            <p class="text-3xl font-bold"><%= books.length %></p>
-          </div>
+          <% }) %>
         </div>
-        <div class="text-sm text-gray-600">
-          <p>Your collection is growing!</p>
-        </div>
-      </div>
-      
-      <div class="bg-white rounded-lg shadow-md p-6">
-        <div class="flex items-center mb-4">
-          <div class="bg-primary rounded-full w-12 h-12 flex items-center justify-center mr-4">
-            <i class="fas fa-check-circle text-xl text-dark"></i>
-          </div>
-          <div>
-            <h3 class="text-lg font-semibold">Completed</h3>
-            <p class="text-3xl font-bold"><%= books.filter(b => b.progress === 100).length %></p>
-          </div>
-        </div>
-        <div class="text-sm text-gray-600">
-          <p><%= Math.round(books.filter(b => b.progress === 100).length / books.length * 100) %>% of your library</p>
-        </div>
-      </div>
-      
-      <div class="bg-white rounded-lg shadow-md p-6">
-        <div class="flex items-center mb-4">
-          <div class="bg-primary rounded-full w-12 h-12 flex items-center justify-center mr-4">
-            <i class="fas fa-clock text-xl text-dark"></i>
-          </div>
-          <div>
-            <h3 class="text-lg font-semibold">Reading Time</h3>
-            <p class="text-3xl font-bold">42h</p>
-          </div>
-        </div>
-        <div class="text-sm text-gray-600">
-          <p>This month</p>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Reading Recommendations -->
-    <div class="bg-white rounded-lg shadow-md p-6">
-      <h2 class="text-2xl font-semibold mb-6">Recommended For You</h2>
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-        <% for(let i = 0; i < 4; i++) { %>
-          <div class="bg-gray-50 rounded-lg overflow-hidden">
-            <img src="/img/books/recommendation-<%= i+1 %>.jpg" alt="Recommended Book" class="w-full h-48 object-cover">
-            <div class="p-4">
-              <h3 class="font-semibold mb-1 truncate">Recommended Title <%= i+1 %></h3>
-              <p class="text-gray-600 text-sm mb-2">Author Name</p>
-              <div class="flex items-center">
-                <% for(let j = 0; j < 5; j++) { %>
-                  <i class="fas fa-star <%= j < 4 ? 'text-yellow-400' : 'text-gray-300' %> text-sm"></i>
-                <% } %>
-                <span class="text-gray-600 text-xs ml-1">(120)</span>
-              </div>
-            </div>
-          </div>
-        <% } %>
-      </div>
+      <% } %>
     </div>
   <% } %>
 </div>
 
-<%- include('../partials/footer') %>
+<style>
+  .book-card {
+    flex: 0 0 auto;
+    border-radius: 6px;
+    background-color: white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    font-size: 0.9rem;
+  }
 
+  .book-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .book-image-container {
+    position: relative;
+    width: 100%;
+    padding-top: 140%;
+    overflow: hidden;
+  }
+
+  .book-cover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .book-info {
+    padding: 0.6rem;
+    text-align: left;
+  }
+
+  .book-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+    line-height: 1.2;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    height: auto;
+    min-height: 2em;
+    color: #333;
+  }
+
+  .book-author {
+    font-size: 0.7rem;
+    color: #3182CE;
+    margin-bottom: 0.4rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .add-bag-btn {
+    background-color: #333;
+    color: white;
+    padding: 0.3rem 0.6rem;
+    border-radius: 0.375rem;
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .add-bag-btn:hover {
+    background-color: #222;
+  }
+
+  .wishlist-btn {
+    background: none;
+    border: none;
+    color: #777;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 0.25rem;
+    transition: all 0.2s;
+  }
+
+  .wishlist-btn:hover {
+    color: #f56565;
+  }
+
+  .action-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.4rem;
+  }
+
+  .filter-btn {
+    background-color: #f3f4f6;
+    color: #4b5563;
+    font-size: 0.8rem;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .filter-btn:hover {
+    background-color: #e5e7eb;
+  }
+
+  .filter-btn.active {
+    background-color: #333;
+    color: white;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Fix the progress bar code that's causing issues
+    const progressBars = document.querySelectorAll('.progress-bar');
+    progressBars.forEach(bar => {
+      const progress = bar.getAttribute('data-progress') || 0;
+      bar.style.width = `${progress}%`;
+    });
+    
+    // Enhanced Book filtering functionality
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const bookCards = document.querySelectorAll('#book-collection .book-card');
+    
+    // Initialize counters for each category (for debugging)
+    let counts = {
+      all: bookCards.length,
+      ebook: 0,
+      audiobook: 0,
+      completed: 0,
+      reading: 0,
+      unread: 0
+    };
+    
+    // Count books in each category
+    bookCards.forEach(card => {
+      const format = card.getAttribute('data-format');
+      const status = card.getAttribute('data-status');
+      
+      if (format === 'ebook') counts.ebook++;
+      if (format === 'audiobook') counts.audiobook++;
+      if (status === 'completed') counts.completed++;
+      if (status === 'reading') counts.reading++;
+      if (status === 'unread') counts.unread++;
+    });
+    
+    // Add count to filter button text for better UX
+    filterButtons.forEach(button => {
+      const filter = button.getAttribute('data-filter');
+      if (counts[filter] !== undefined) {
+        button.innerHTML = `${button.innerHTML} (${counts[filter]})`;
+      }
+    });
+
+    // Set up filter click handlers
+    filterButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        // Update active button
+        filterButtons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+
+        const filter = button.getAttribute('data-filter');
+        
+        bookCards.forEach(card => {
+          const format = card.getAttribute('data-format');
+          const status = card.getAttribute('data-status');
+          
+          // Debugging log to see what's being filtered
+          // console.log(`Filtering: ${filter}, Card format: ${format}, status: ${status}`);
+          
+          if (filter === 'all' || 
+              (filter === 'ebook' && format === 'ebook') ||
+              (filter === 'audiobook' && format === 'audiobook') ||
+              (filter === 'completed' && status === 'completed') ||
+              (filter === 'reading' && status === 'reading')) {
+            card.style.display = 'block';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+    
+    // Correctly refresh progress bars
+    function refreshProgressBars() {
+      fetch('/library/progress-data')
+        .then(response => response.json())
+        .then(data => {
+          if (data.success && data.items) {
+            data.items.forEach(item => {
+              const bookId = item.book;
+              const progress = item.progress || 0;
+              
+              document.querySelectorAll(`.book-card[data-id="${bookId}"] .progress-bar`).forEach(bar => {
+                bar.style.width = `${progress}%`;
+                
+                // Update progress text if it exists
+                const progressText = bar.closest('.book-card').querySelector('.progress-text');
+                if (progressText) {
+                  progressText.textContent = `${progress}% complete`;
+                }
+              });
+            });
+          }
+        })
+        .catch(err => console.error('Error refreshing progress:', err));
+    }
+    
+    // Add data-id attributes to all book cards for targeting
+    document.querySelectorAll('.book-card').forEach(card => {
+      const bookIdElement = card.querySelector('[data-book-id]');
+      if (bookIdElement) {
+        const bookId = bookIdElement.getAttribute('data-book-id');
+        card.setAttribute('data-id', bookId);
+      }
+    });
+    
+    // Refresh once on page load and then every minute
+    refreshProgressBars();
+    setInterval(refreshProgressBars, 60000);
+  });
+</script>
+
+<%- include('../partials/footer') %>

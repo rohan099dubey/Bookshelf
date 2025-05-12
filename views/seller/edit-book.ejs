@@ -1,0 +1,150 @@
+<%- include('../partials/header') %>
+
+<div class="container mx-auto px-4 py-8">
+  <div class="max-w-4xl mx-auto">
+    <!-- Breadcrumb -->
+    <nav class="text-sm mb-6" aria-label="breadcrumb">
+      <ol class="list-none p-0 inline-flex">
+        <li class="flex items-center">
+          <a href="/" class="text-gray-500 hover:text-primary">Home</a>
+          <svg class="fill-current w-3 h-3 mx-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+            <path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"/>
+          </svg>
+        </li>
+        <li class="flex items-center">
+          <a href="/seller/inventory" class="text-gray-500 hover:text-primary">Inventory</a>
+          <svg class="fill-current w-3 h-3 mx-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+            <path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"/>
+          </svg>
+        </li>
+        <li>
+          <span class="text-gray-800 font-medium">Edit Book</span>
+        </li>
+      </ol>
+    </nav>
+
+    <div class="bg-white rounded-lg shadow-sm p-6">
+      <h1 class="text-2xl font-bold text-gray-800 mb-6">Edit Book</h1>
+
+      <form action="/seller/edit/<%= book._id %>" method="POST">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Basic Information -->
+          <div class="space-y-4">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4">Basic Information</h2>
+            
+            <div>
+              <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Title *</label>
+              <input type="text" id="title" name="title" value="<%= book.title %>" required
+                class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+            </div>
+
+            <div>
+              <label for="author" class="block text-sm font-medium text-gray-700 mb-1">Author *</label>
+              <input type="text" id="author" name="author" value="<%= book.author %>" required
+                class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+            </div>
+
+            <div>
+              <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description *</label>
+              <textarea id="description" name="description" rows="4" required
+                class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"><%= book.description %></textarea>
+            </div>
+          </div>
+
+          <!-- Pricing and Stock -->
+          <div class="space-y-4">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4">Pricing & Stock</h2>
+            
+            <div>
+              <label for="price" class="block text-sm font-medium text-gray-700 mb-1">Price (₹) *</label>
+              <input type="number" id="price" name="price" value="<%= book.price %>" min="0" step="0.01" required
+                class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+            </div>
+
+            <div>
+              <label for="discountPrice" class="block text-sm font-medium text-gray-700 mb-1">Discount Price (₹)</label>
+              <input type="number" id="discountPrice" name="discountPrice" value="<%= book.discountPrice %>" min="0" step="0.01"
+                class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+              <p class="text-xs text-gray-500 mt-1">Leave empty to use regular price</p>
+            </div>
+
+            <div>
+              <label for="stock" class="block text-sm font-medium text-gray-700 mb-1">Stock *</label>
+              <input type="number" id="stock" name="stock" value="<%= book.stock %>" min="0" required
+                class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+            </div>
+
+            <div class="flex items-center">
+              <input type="checkbox" id="isAvailable" name="isAvailable" <%= book.isAvailable ? 'checked' : '' %>
+                class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
+              <label for="isAvailable" class="ml-2 block text-sm text-gray-700">
+                Book is available for purchase
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Additional Information -->
+        <div class="mt-8 space-y-4">
+          <h2 class="text-lg font-semibold text-gray-800 mb-4">Additional Information</h2>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label for="isbn" class="block text-sm font-medium text-gray-700 mb-1">ISBN</label>
+              <input type="text" id="isbn" name="isbn" value="<%= book.isbn %>"
+                class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+            </div>
+
+            <div>
+              <label for="publisher" class="block text-sm font-medium text-gray-700 mb-1">Publisher</label>
+              <input type="text" id="publisher" name="publisher" value="<%= book.publisher %>"
+                class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+            </div>
+
+            <div>
+              <label for="publishedDate" class="block text-sm font-medium text-gray-700 mb-1">Published Date</label>
+              <input type="date" id="publishedDate" name="publishedDate" value="<%= book.publishedDate ? new Date(book.publishedDate).toISOString().split('T')[0] : '' %>"
+                class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+            </div>
+
+            <div>
+              <label for="pageCount" class="block text-sm font-medium text-gray-700 mb-1">Page Count</label>
+              <input type="number" id="pageCount" name="pageCount" value="<%= book.pageCount %>" min="0"
+                class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+            </div>
+
+            <div>
+              <label for="language" class="block text-sm font-medium text-gray-700 mb-1">Language</label>
+              <input type="text" id="language" name="language" value="<%= book.language %>"
+                class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+            </div>
+
+            <div>
+              <label for="format" class="block text-sm font-medium text-gray-700 mb-1">Format</label>
+              <select id="format" name="format" required
+                class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                <option value="paperback" <%= book.format === 'paperback' ? 'selected' : '' %>>Paperback</option>
+                <option value="hardcover" <%= book.format === 'hardcover' ? 'selected' : '' %>>Hardcover</option>
+                <option value="ebook" <%= book.format === 'ebook' ? 'selected' : '' %>>E-Book</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit Buttons -->
+        <div class="mt-8 flex justify-end space-x-4">
+          <a href="/seller/inventory" 
+            class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
+            Cancel
+          </a>
+          <button type="submit" 
+            class="px-6 py-2 bg-primary text-dark rounded-lg hover:bg-opacity-90 transition">
+            Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %> 

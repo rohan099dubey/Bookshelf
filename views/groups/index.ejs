@@ -1,0 +1,120 @@
+<%- include('../partials/header') %>
+
+<div class="container mx-auto px-4 py-8 mt-16">
+  <div class="flex flex-col md:flex-row justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold text-secondary mb-4 md:mb-0">
+      Genre Communities
+    </h1>
+    <div class="flex flex-col sm:flex-row gap-4">
+      <a
+        href="/groups/new"
+        class="bg-primary text-secondary font-semibold px-6 py-2 rounded-lg hover:bg-primary-dark transition duration-300 text-center"
+      >
+        <i class="fas fa-plus-circle mr-2"></i> Create Community
+      </a>
+      <a
+        href="/groups/my-groups"
+        class="border-2 border-primary text-primary font-semibold px-6 py-2 rounded-lg hover:bg-primary hover:text-secondary transition duration-300 text-center"
+      >
+        <i class="fas fa-users mr-2"></i> My Communities
+      </a>
+    </div>
+  </div>
+
+  <!-- Genre communities list -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <% if (groups.length === 0) { %>
+    <div class="col-span-full text-center py-10">
+      <div class="text-6xl mb-4 text-gray-300">
+        <i class="fas fa-users"></i>
+      </div>
+      <h3 class="text-xl font-semibold text-secondary mb-2">
+        No genre communities yet
+      </h3>
+      <p class="text-text-light mb-4">
+        Be the first to create a genre community!
+      </p>
+      <a
+        href="/groups/new"
+        class="bg-primary text-secondary font-semibold px-6 py-2 rounded-lg hover:bg-primary-dark transition duration-300"
+      >
+        Create Community
+      </a>
+    </div>
+    <% } else { %> <% groups.forEach(group => { %>
+    <div
+      class="bg-white rounded-lg overflow-hidden shadow hover:shadow-md transition duration-300 flex flex-col h-full"
+    >
+      <div
+        class="h-28 bg-gradient-to-r from-secondary to-secondary/70 flex items-center justify-center relative"
+      >
+        <h3 class="text-2xl font-bold text-white"><%= group.genre %></h3>
+        <div
+          class="absolute top-2 right-2 bg-primary/90 text-secondary text-xs px-2 py-1 rounded-full"
+        >
+          <%= group.members.length %> <%= group.members.length === 1 ? 'member'
+          : 'members' %>
+        </div>
+      </div>
+
+      <div class="p-6 flex-grow">
+        <h3
+          class="text-xl font-bold text-secondary mb-2 hover:text-primary transition duration-300"
+        >
+          <a href="/groups/<%= group._id %>"><%= group.name %></a>
+        </h3>
+
+        <p class="text-text-light mb-4 line-clamp-3">
+          <%= group.description %>
+        </p>
+
+        <div class="flex flex-wrap gap-2 mb-4">
+          <span
+            class="bg-gray-100 text-secondary text-xs px-2 py-1 rounded-full"
+          >
+            <i class="fas fa-tag mr-1"></i> <%= group.genre %>
+          </span>
+          <span
+            class="bg-gray-100 text-secondary text-xs px-2 py-1 rounded-full"
+          >
+            <i class="fas fa-comment mr-1"></i> <%= group.posts.length %> posts
+          </span>
+        </div>
+
+        <div class="mt-4">
+          <div class="flex -space-x-2">
+            <% group.members.slice(0, 5).forEach(member => { %>
+            <img
+              src="<%= member.avatar %>"
+              alt="<%= member.name %>"
+              class="w-8 h-8 rounded-full border-2 border-white object-cover"
+              title="<%= member.name %>"
+            />
+            <% }) %> <% if (group.members.length > 5) { %>
+            <div
+              class="w-8 h-8 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center text-gray-500 text-xs"
+            >
+              +<%= group.members.length - 5 %>
+            </div>
+            <% } %>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-6 py-3 bg-gray-50 flex justify-between items-center">
+        <div class="text-xs text-gray-500">
+          <i class="fas fa-user mr-1"></i> Created by <%= group.creator.name %>
+        </div>
+        <a
+          href="/groups/<%= group._id %>"
+          class="text-primary hover:text-primary-dark transition-colors text-sm font-medium"
+        >
+          Join Discussion <i class="fas fa-arrow-right ml-1"></i>
+        </a>
+      </div>
+    </div>
+    <% }) %> <% } %>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

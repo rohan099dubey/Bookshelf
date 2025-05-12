@@ -100,8 +100,8 @@
           <div class="flex items-center">
             <span class="font-bold text-lg w-6"><%= index + 1 %>.</span>
             <img src="<%= book.coverImage %>" alt="<%= book.title %>" class="w-12 h-16 object-cover rounded ml-2 mr-4">
-            <div class="flex-grow">
-              <h3 class="font-medium truncate"><%= book.title %></h3>
+            <div class="flex-grow overflow-hidden">
+              <h3 class="font-medium text-ellipsis whitespace-nowrap overflow-hidden"><%= book.title %></h3>
               <div class="flex justify-between text-sm text-gray-600">
                 <span>₹<%= book.price %></span>
                 <span><%= book.reviewCount %> reviews</span>
@@ -146,8 +146,8 @@
                 <div class="text-sm font-medium text-gray-900">#<%= order._id.toString().substr(-6) %></div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900"><%= order.user.name %></div>
-                <div class="text-sm text-gray-500"><%= order.user.email %></div>
+                <div class="text-sm text-gray-900"><%= order.user ? order.user.name : 'Unknown Customer' %></div>
+                <div class="text-sm text-gray-500"><%= order.user ? order.user.email : 'No email available' %></div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="text-sm text-gray-900"><%= new Date(order.orderDate).toLocaleDateString() %></div>
@@ -194,14 +194,16 @@
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     // Sales Chart
-    const ctx = document.getElementById('salesChart').getContext('2d'); 
+    const ctx = document.getElementById('salesChart').getContext('2d');
+    const salesData = JSON.parse('<%- JSON.stringify(salesData) %>');
+    
     const salesChart = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: [<%= salesData.map(data => `'${data.month}'`).join(',') %>], 
+        labels: salesData.map(data => data.month),
         datasets: [{
           label: 'Sales (₹)',
-          data: [<%= salesData.map(data => data.sales).join(',') %>],
+          data: salesData.map(data => data.sales),
           backgroundColor: 'rgba(255, 230, 25, 0.2)',
           borderColor: 'rgba(255, 230, 25, 1)',
           borderWidth: 2,
@@ -209,7 +211,8 @@
           pointBackgroundColor: 'rgba(255, 230, 25, 1)',
           pointBorderColor: '#fff',
           pointBorderWidth: 2,
-          pointRadius: 4
+          pointRadius: 4,
+          fill: true
         }]
       },
       options: {
@@ -220,6 +223,11 @@
             beginAtZero: true,
             grid: {
               color: 'rgba(0, 0, 0, 0.05)'
+            },
+            ticks: {
+              callback: function(value) {
+                return '₹' + value.toLocaleString();
+              }
             }
           },
           x: {
@@ -231,12 +239,38 @@
         plugins: {
           legend: {
             display: false
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return '₹' + context.raw.toLocaleString();
+              }
+            }
           }
         }
       }
+    });
+
+    // Time range filter
+    document.getElementById('timeRange').addEventListener('change', function(e) {
+      const range = e.target.value;
+      let filteredData = [...salesData];
+      
+      if (range === 'month') {
+        const currentMonth = new Date().getMonth();
+        filteredData = salesData.filter(data => 
+          new Date(data.month + ' 1, 2024').getMonth() === currentMonth
+        );
+      } else if (range === 'week') {
+        const currentWeek = Math.floor(new Date().getDate() / 7);
+        filteredData = salesData.slice(-7);
+      }
+      
+      salesChart.data.labels = filteredData.map(data => data.month);
+      salesChart.data.datasets[0].data = filteredData.map(data => data.sales);
+      salesChart.update();
     });
   });
 </script>
 
 <%- include('../partials/footer') %>
-

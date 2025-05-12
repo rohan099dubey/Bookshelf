@@ -88,63 +88,20 @@
     </div>
   </div>
   
-  <!-- System Health -->
-  <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-    <h2 class="text-xl font-semibold mb-4">System Health</h2>
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-      <div class="border border-gray-200 rounded-lg p-4">
-        <div class="flex items-center justify-between mb-2">
-          <h3 class="font-medium">CPU Usage</h3>
-          <span class="text-sm text-gray-500"><%= systemHealth.cpu %></span>
-        </div>
-        <div class="w-full bg-gray-200 rounded-full h-2.5">
-          <div class="bg-blue-600 h-2.5 rounded-full" style="width: <%= parseInt(systemHealth.cpu) %>%"></div>
-        </div>
-      </div>
-      
-      <div class="border border-gray-200 rounded-lg p-4">
-        <div class="flex items-center justify-between mb-2">
-          <h3 class="font-medium">Memory Usage</h3>
-          <span class="text-sm text-gray-500"><%= systemHealth.memory %></span>
-        </div>
-        <div class="w-full bg-gray-200 rounded-full h-2.5">
-          <div class="bg-purple-600 h-2.5 rounded-full" style="width: 30%"></div>
-        </div>
-      </div>
-      
-      <div class="border border-gray-200 rounded-lg p-4">
-        <div class="flex items-center justify-between mb-2">
-          <h3 class="font-medium">Disk Usage</h3>
-          <span class="text-sm text-gray-500"><%= systemHealth.disk %></span>
-        </div>
-        <div class="w-full bg-gray-200 rounded-full h-2.5">
-          <div class="bg-green-600 h-2.5 rounded-full" style="width: 24%"></div>
-        </div>
-      </div>
-      
-      <div class="border border-gray-200 rounded-lg p-4">
-        <div class="flex items-center justify-between mb-2">
-          <h3 class="font-medium">Uptime</h3>
-          <span class="text-sm text-gray-500"><%= systemHealth.uptime %></span>
-        </div>
-        <div class="text-sm text-gray-600 mt-2">
-          <p>Last restart: <%= new Date(systemHealth.lastRestart).toLocaleString() %></p>
-        </div>
-      </div>
-    </div>
-  </div>
-  
   <!-- Recent Activity -->
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
     <div class="bg-white rounded-lg shadow-md p-6">
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-semibold">Recent Users</h2>
-        <a href="/admin/users" class="text-primary hover:text-dark text-sm">View All</a>
+        <a href="/admin/users" class="text-primary hover:text-dark text-sm font-medium">View All</a>
       </div>
       <div class="space-y-4">
         <% recentUsers.forEach(user => { %>
           <div class="flex items-center">
-            <img src="<%= user.profileImage %>" alt="<%= user.name %>" class="w-10 h-10 rounded-full mr-3">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center mr-3" 
+                 style="background-color: <%= ['#3b82f6', '#10b981', '#ef4444', '#f59e0b', '#8b5cf6'][Math.floor(Math.random() * 5)] %>">
+              <i class="fas fa-user text-white"></i>
+            </div>
             <div class="flex-grow">
               <div class="flex justify-between">
                 <h3 class="font-medium"><%= user.name %></h3>
@@ -179,7 +136,7 @@
                 <span class="text-xs text-gray-500"><%= new Date(order.orderDate).toLocaleDateString() %></span>
               </div>
               <div class="flex justify-between text-sm">
-                <span class="text-gray-600"><%= order.user.name %></span>
+                <span class="text-gray-600"><%= order.buyer ? order.buyer.name : 'Unknown Buyer' %></span>
                 <span class="font-medium">₹<%= order.totalAmount %></span>
               </div>
             </div>
@@ -267,4 +224,3 @@
 </script>
 
 <%- include('../partials/footer') %>
-

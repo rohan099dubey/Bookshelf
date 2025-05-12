@@ -1,0 +1,212 @@
+<%- include('../partials/header') %>
+
+<div class="container mx-auto px-4 py-8 mt-16">
+  <div class="flex flex-col md:flex-row justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold text-secondary mb-4 md:mb-0">
+      University Groups
+    </h1>
+    <div class="flex flex-col sm:flex-row gap-4">
+      <a
+        href="/universities/new"
+        class="bg-primary text-secondary font-semibold px-6 py-2 rounded-lg hover:bg-primary-dark transition duration-300 text-center"
+      >
+        <i class="fas fa-plus-circle mr-2"></i> Create Group
+      </a>
+      <a
+        href="/universities/my-groups"
+        class="border-2 border-primary text-primary font-semibold px-6 py-2 rounded-lg hover:bg-primary hover:text-secondary transition duration-300 text-center"
+      >
+        <i class="fas fa-users mr-2"></i> My Groups
+      </a>
+    </div>
+  </div>
+
+  <!-- Search and filter -->
+  <div class="bg-white p-4 mb-6 rounded-lg shadow">
+    <form
+      action="/universities"
+      method="GET"
+      class="flex flex-col md:flex-row gap-4"
+    >
+      <div class="flex-1">
+        <input
+          type="text"
+          name="search"
+          value="<%= search %>"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+          placeholder="Search by university name, course, or location..."
+        />
+      </div>
+      <div class="w-full md:w-auto">
+        <button
+          type="submit"
+          class="w-full md:w-auto px-6 py-2 bg-primary text-secondary font-semibold rounded-lg hover:bg-primary-dark transition"
+        >
+          <i class="fas fa-search mr-2"></i> Search
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Groups grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <% if (groups.length === 0) { %>
+    <div class="col-span-full text-center py-10">
+      <div class="text-6xl mb-4 text-gray-300">
+        <i class="fas fa-university"></i>
+      </div>
+      <h3 class="text-xl font-semibold text-secondary mb-2">
+        No university groups found
+      </h3>
+      <p class="text-text-light mb-4">
+        Create a group for your university or course!
+      </p>
+      <a
+        href="/universities/new"
+        class="bg-primary text-secondary font-semibold px-6 py-2 rounded-lg hover:bg-primary-dark transition duration-300"
+      >
+        Create Group
+      </a>
+    </div>
+    <% } else { %> <% groups.forEach(group => { %>
+    <div
+      class="bg-white rounded-lg overflow-hidden shadow hover:shadow-md transition duration-300 flex flex-col h-full"
+    >
+      <div
+        class="h-32 bg-gradient-to-r from-primary to-primary/70 flex items-center justify-center relative"
+      >
+        <div
+          class="absolute top-0 left-0 w-full h-full bg-opacity-30 bg-black flex items-center justify-center"
+        >
+          <h3 class="text-2xl font-bold text-white"><%= group.university %></h3>
+        </div>
+        <div
+          class="absolute top-2 right-2 bg-white/90 text-primary text-xs px-2 py-1 rounded-full"
+        >
+          <%= group.members.length %> <%= group.members.length === 1 ? 'member'
+          : 'members' %>
+        </div>
+      </div>
+
+      <div class="p-6 flex-grow">
+        <h3
+          class="text-xl font-bold text-secondary mb-2 hover:text-primary transition duration-300"
+        >
+          <a href="/universities/<%= group._id %>"><%= group.name %></a>
+        </h3>
+
+        <p class="text-text-light mb-4 line-clamp-3">
+          <%= group.description %>
+        </p>
+
+        <div class="flex flex-wrap gap-2 mb-4">
+          <span
+            class="bg-gray-100 text-secondary text-xs px-2 py-1 rounded-full"
+          >
+            <i class="fas fa-university mr-1"></i> <%= group.university %>
+          </span>
+          <span
+            class="bg-gray-100 text-secondary text-xs px-2 py-1 rounded-full"
+          >
+            <i class="fas fa-graduation-cap mr-1"></i> <%= group.course %>
+          </span>
+          <% if (group.location) { %>
+          <span
+            class="bg-gray-100 text-secondary text-xs px-2 py-1 rounded-full"
+          >
+            <i class="fas fa-map-marker-alt mr-1"></i> <%= group.location %>
+          </span>
+          <% } %>
+        </div>
+
+        <div class="mt-4">
+          <div class="flex -space-x-2">
+            <% group.members.slice(0, 5).forEach(member => { %>
+            <img
+              src="<%= member.avatar %>"
+              alt="<%= member.name %>"
+              class="w-8 h-8 rounded-full border-2 border-white object-cover"
+              title="<%= member.name %>"
+            />
+            <% }) %> <% if (group.members.length > 5) { %>
+            <div
+              class="w-8 h-8 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center text-gray-500 text-xs"
+            >
+              +<%= group.members.length - 5 %>
+            </div>
+            <% } %>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-6 py-3 bg-gray-50 flex justify-between items-center">
+        <div class="text-xs text-gray-500">
+          <i class="fas fa-user mr-1"></i> Created by <%= group.creator.name %>
+        </div>
+        <a
+          href="/universities/<%= group._id %>"
+          class="text-primary hover:text-primary-dark transition-colors text-sm font-medium"
+        >
+          View Group <i class="fas fa-arrow-right ml-1"></i>
+        </a>
+      </div>
+    </div>
+    <% }) %> <% } %>
+  </div>
+
+  <!-- Pagination -->
+  <% if (totalPages > 1) { %>
+  <div class="flex justify-center mt-8">
+    <div class="flex">
+      <% if (currentPage > 1) { %>
+      <a
+        href="/universities?page=<%= currentPage - 1 %>&search=<%= search %>"
+        class="px-4 py-2 mx-1 bg-white text-secondary rounded-lg border hover:bg-gray-50 transition"
+      >
+        <i class="fas fa-chevron-left"></i>
+      </a>
+      <% } %> <% // Define how many page links to show const maxPagesToShow = 5;
+      let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+      let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1); //
+      Adjust if we're near the end if (endPage - startPage + 1 < maxPagesToShow)
+      { startPage = Math.max(1, endPage - maxPagesToShow + 1); } // Show first
+      page if not included if (startPage > 1) { %>
+      <a
+        href="/universities?page=1&search=<%= search %>"
+        class="px-4 py-2 mx-1 bg-white text-secondary rounded-lg border hover:bg-gray-50 transition"
+      >
+        1
+      </a>
+      <% if (startPage > 2) { %>
+      <span class="px-4 py-2 mx-1 text-gray-500">...</span>
+      <% } %> <% } %> <% for (let i = startPage; i <= endPage; i++) { %>
+      <a
+        href="/universities?page=<%= i %>&search=<%= search %>"
+        class="px-4 py-2 mx-1 <%= i === currentPage ? 'bg-primary text-secondary' : 'bg-white text-secondary hover:bg-gray-50' %> rounded-lg border transition"
+      >
+        <%= i %>
+      </a>
+      <% } %> <% // Show last page if not included if (endPage < totalPages) {
+      if (endPage < totalPages - 1) { %>
+      <span class="px-4 py-2 mx-1 text-gray-500">...</span>
+      <% } %>
+      <a
+        href="/universities?page=<%= totalPages %>&search=<%= search %>"
+        class="px-4 py-2 mx-1 bg-white text-secondary rounded-lg border hover:bg-gray-50 transition"
+      >
+        <%= totalPages %>
+      </a>
+      <% } %> <% if (currentPage < totalPages) { %>
+      <a
+        href="/universities?page=<%= currentPage + 1 %>&search=<%= search %>"
+        class="px-4 py-2 mx-1 bg-white text-secondary rounded-lg border hover:bg-gray-50 transition"
+      >
+        <i class="fas fa-chevron-right"></i>
+      </a>
+      <% } %>
+    </div>
+  </div>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %>

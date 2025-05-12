@@ -8,13 +8,13 @@
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-exports.ensureAuthenticated = (req, res, next) => {
+module.exports.ensureAuthenticated = function(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
   }
-  req.flash("error_msg", "Please log in to access this resource")
-  res.redirect("/auth/login")
-}
+  req.flash('alert', 'Please log in to view this resource');
+  res.redirect('/auth/login');
+};
 
 /**
  * Ensures user has buyer role
@@ -22,13 +22,13 @@ exports.ensureAuthenticated = (req, res, next) => {
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-exports.ensureBuyer = (req, res, next) => {
-  if (req.isAuthenticated() && req.user.role === "buyer") {
+module.exports.ensureBuyer = function(req, res, next) {
+  if (req.isAuthenticated() && req.user.role === 'buyer') {
     return next();
   }
-  req.flash("error_msg", "You are not authorized to access this resource")
-  res.redirect("/")
-}
+  req.flash('error_msg', 'Access denied. This page is only for buyers.');
+  res.redirect('/dashboard');
+};
 
 /**
  * Ensures user has seller role
@@ -36,13 +36,13 @@ exports.ensureBuyer = (req, res, next) => {
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-exports.ensureSeller = (req, res, next) => {
-  if (req.isAuthenticated() && req.user.role === "seller") {
+module.exports.ensureSeller = function(req, res, next) {
+  if (req.isAuthenticated() && req.user.role === 'seller') {
     return next();
   }
-  req.flash("error_msg", "You are not authorized to access this resource")
-  res.redirect("/")
-}
+  req.flash('error_msg', 'Access denied. This page is only for sellers.');
+  res.redirect('/dashboard');
+};
 
 /**
  * Ensures user has admin role
@@ -50,24 +50,24 @@ exports.ensureSeller = (req, res, next) => {
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-exports.ensureAdmin = (req, res, next) => {
-  if (req.isAuthenticated() && req.user.role === "admin") {
+module.exports.ensureAdmin = function(req, res, next) {
+  if (req.isAuthenticated() && req.user.role === 'admin') {
     return next();
   }
-  req.flash("error_msg", "You are not authorized to access this resource")
-  res.redirect("/")
-}
+  req.flash('error_msg', 'Access denied. This page is only for admins.');
+  res.redirect('/dashboard');
+};
 
 /**
- * Ensures user is not authenticated (for login/register pages)
+ * Forwards authenticated users away from the login page
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-exports.ensureNotAuthenticated = (req, res, next) => {
+module.exports.forwardAuthenticated = function(req, res, next) {
   if (!req.isAuthenticated()) {
     return next();
   }
-  res.redirect("/")
-}
+  res.redirect('/dashboard');
+};
 

@@ -1,0 +1,124 @@
+<%- include('../partials/header') %>
+
+<div class="container mx-auto px-4 py-8 mt-16">
+  <div class="max-w-4xl mx-auto">
+    <div class="flex items-center mb-6">
+      <a
+        href="/groups"
+        class="text-secondary hover:text-primary transition mr-3"
+      >
+        <i class="fas fa-arrow-left"></i>
+      </a>
+      <h1 class="text-3xl font-bold text-secondary">
+        Create a Genre Community
+      </h1>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <form action="/groups" method="POST">
+        <div class="mb-6">
+          <label for="name" class="block text-secondary font-medium mb-2"
+            >Community Name</label
+          >
+          <input
+            type="text"
+            id="name"
+            name="name"
+            required
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+            placeholder="Enter a name for your community"
+          />
+        </div>
+
+        <div class="mb-6">
+          <label for="genre" class="block text-secondary font-medium mb-2"
+            >Genre</label
+          >
+          <select
+            id="genre"
+            name="genre"
+            required
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+          >
+            <option value="">Select a genre</option>
+            <option value="Fiction">Fiction</option>
+            <option value="Non-Fiction">Non-Fiction</option>
+            <option value="Mystery & Thriller">Mystery & Thriller</option>
+            <option value="Science Fiction">Science Fiction</option>
+            <option value="Fantasy">Fantasy</option>
+            <option value="Romance">Romance</option>
+            <option value="Horror">Horror</option>
+            <option value="Historical Fiction">Historical Fiction</option>
+            <option value="Biography & Autobiography">
+              Biography & Autobiography
+            </option>
+            <option value="Self-Help">Self-Help</option>
+            <option value="Business & Economics">Business & Economics</option>
+            <option value="Poetry">Poetry</option>
+            <option value="Comics & Graphic Novels">
+              Comics & Graphic Novels
+            </option>
+            <option value="Young Adult">Young Adult</option>
+            <option value="Children's Books">Children's Books</option>
+            <option value="Cookbooks">Cookbooks</option>
+            <option value="Travel">Travel</option>
+            <option value="Art & Photography">Art & Photography</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div class="mb-6">
+          <label for="description" class="block text-secondary font-medium mb-2"
+            >Description</label
+          >
+          <textarea
+            id="description"
+            name="description"
+            required
+            rows="4"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+            placeholder="Describe your community..."
+          ></textarea>
+          <p class="text-sm text-text-light mt-1">
+            Explain what your community is about and what kind of discussions
+            you want to encourage.
+          </p>
+        </div>
+
+        <div class="mb-6">
+          <div
+            class="bg-blue-50 border-l-4 border-blue-500 text-blue-700 p-4"
+            role="alert"
+          >
+            <p class="font-bold">Note</p>
+            <p>
+              By creating a community, you'll automatically become its
+              administrator.
+            </p>
+            <p>
+              You'll be responsible for moderating discussions and ensuring a
+              positive environment.
+            </p>
+          </div>
+        </div>
+
+        <div class="flex justify-end">
+          <a
+            href="/groups"
+            class="px-6 py-2 border border-gray-300 rounded-lg text-secondary mr-3 hover:bg-gray-50 transition"
+          >
+            Cancel
+          </a>
+          <button
+            type="submit"
+            class="px-6 py-2 bg-primary text-secondary font-semibold rounded-lg hover:bg-primary-dark transition"
+          >
+            Create Community
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

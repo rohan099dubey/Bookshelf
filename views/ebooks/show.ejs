@@ -1,0 +1,416 @@
+<%- include('../partials/header') %>
+
+<div class="container mx-auto px-4 py-8 mt-16">
+  <div class="max-w-6xl mx-auto">
+    <div class="flex items-center mb-6">
+      <a
+        href="/ebooks"
+        class="text-secondary hover:text-primary transition mr-3"
+      >
+        <i class="fas fa-arrow-left"></i>
+      </a>
+      <h1 class="text-3xl font-bold text-secondary">E-Book Details</h1>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+      <div class="flex flex-col md:flex-row">
+        <!-- Left side - Cover image -->
+        <div class="md:w-1/3 p-6">
+          <div class="w-full h-96 rounded-lg overflow-hidden bg-gray-100">
+            <img
+              src="<%= ebook.coverImage %>"
+              alt="<%= ebook.title %>"
+              class="w-full h-full object-contain"
+            />
+          </div>
+
+          <div class="mt-4 flex flex-col gap-2">
+            <% if (hasPurchased || ebook.price === 0 || isSeller) { %>
+            <a
+              href="/ebooks/<%= ebook._id %>/download"
+              class="w-full bg-primary text-secondary font-semibold py-3 rounded-lg text-center hover:bg-primary-dark transition flex items-center justify-center"
+            >
+              <i class="fas fa-download mr-2"></i>
+              <%= ebook.price === 0 ? 'Download Free' : 'Download E-Book' %>
+            </a>
+            <% } else { %>
+            <button
+              id="purchase-btn"
+              class="w-full bg-primary text-secondary font-semibold py-3 rounded-lg text-center hover:bg-primary-dark transition flex items-center justify-center"
+            >
+              <i class="fas fa-shopping-cart mr-2"></i>
+              Purchase for ₹<%= ebook.price %>
+            </button>
+            <% } %> <% if (isSeller) { %>
+            <div class="flex gap-2 mt-2">
+              <a
+                href="/ebooks/<%= ebook._id %>/edit"
+                class="flex-1 bg-gray-100 text-gray-700 font-medium py-2 rounded-lg text-center hover:bg-gray-200 transition"
+              >
+                <i class="fas fa-edit mr-1"></i> Edit
+              </a>
+              <form
+                action="/ebooks/<%= ebook._id %>?_method=DELETE"
+                method="POST"
+                class="flex-1"
+                onsubmit="return confirm('Are you sure you want to delete this e-book?')"
+              >
+                <button
+                  type="submit"
+                  class="w-full bg-red-100 text-red-700 font-medium py-2 rounded-lg text-center hover:bg-red-200 transition"
+                >
+                  <i class="fas fa-trash-alt mr-1"></i> Delete
+                </button>
+              </form>
+            </div>
+            <% } %>
+          </div>
+        </div>
+
+        <!-- Right side - Book details -->
+        <div class="md:w-2/3 p-6 md:border-l border-gray-200">
+          <div class="mb-6">
+            <h2 class="text-2xl font-bold text-secondary mb-2">
+              <%= ebook.title %>
+            </h2>
+            <p class="text-xl text-accent">by <%= ebook.author %></p>
+
+            <div class="flex items-center mt-4">
+              <div class="flex items-center mr-4">
+                <img
+                  src="<%= ebook.seller.avatar %>"
+                  alt="<%= ebook.seller.name %>"
+                  class="w-8 h-8 rounded-full object-cover mr-2"
+                />
+                <span class="text-sm text-gray-600"
+                  >Uploaded by <%= ebook.seller.name %></span
+                >
+              </div>
+
+              <span class="text-sm text-gray-600">
+                <i class="fas fa-calendar-alt mr-1"></i>
+                <%= new Date(ebook.createdAt).toLocaleDateString('en-US', { day:
+                'numeric', month: 'short', year: 'numeric' }) %>
+              </span>
+            </div>
+          </div>
+
+          <div class="mb-6">
+            <div class="flex flex-wrap gap-2 mb-4">
+              <span
+                class="bg-gray-100 text-secondary text-sm px-3 py-1 rounded-full"
+              >
+                <%= ebook.category %>
+              </span>
+              <span
+                class="bg-gray-100 text-secondary text-sm px-3 py-1 rounded-full"
+              >
+                <%= ebook.fileType.toUpperCase() %> format
+              </span>
+              <% if (ebook.price === 0) { %>
+              <span
+                class="bg-green-100 text-green-700 text-sm px-3 py-1 rounded-full"
+              >
+                Free
+              </span>
+              <% } %>
+            </div>
+
+            <% if (ebook.price > 0) { %>
+            <div class="flex items-center mb-4">
+              <span class="text-2xl font-bold text-primary mr-2"
+                >₹<%= ebook.price %></span
+              >
+            </div>
+            <% } %> <% if (ebook.rating > 0) { %>
+            <div class="flex items-center mb-4">
+              <div class="flex text-yellow-400 mr-2">
+                <% for(let i=0; i < 5; i++) { %>
+                <i
+                  class="<%= i < Math.floor(ebook.rating) ? 'fas' : (i < ebook.rating ? 'fas fa-star-half-alt' : 'far') %> fa-star"
+                ></i>
+                <% } %>
+              </div>
+              <span class="text-gray-600"
+                ><%= ebook.rating.toFixed(1) %> (<%= ebook.reviewCount %>
+                reviews)</span
+              >
+            </div>
+            <% } %>
+          </div>
+
+          <div class="mb-6">
+            <h3 class="text-lg font-semibold text-secondary mb-2">
+              Description
+            </h3>
+            <p class="text-text-light whitespace-pre-line">
+              <%= ebook.description %>
+            </p>
+          </div>
+
+          <div class="mb-6">
+            <h3 class="text-lg font-semibold text-secondary mb-2">
+              File Details
+            </h3>
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <ul class="space-y-2">
+                <li class="flex items-center">
+                  <span class="w-28 text-gray-600">Format:</span>
+                  <span class="font-medium text-secondary"
+                    ><%= ebook.fileType.toUpperCase() %></span
+                  >
+                </li>
+                <li class="flex items-center">
+                  <span class="w-28 text-gray-600">Availability:</span>
+                  <span
+                    class="font-medium text-<%= ebook.isAvailable ? 'green' : 'red' %>-600"
+                  >
+                    <%= ebook.isAvailable ? 'Available' : 'Not Available' %>
+                  </span>
+                </li>
+                <li class="flex items-center">
+                  <span class="w-28 text-gray-600">Price:</span>
+                  <span class="font-medium text-secondary">
+                    <%= ebook.price === 0 ? 'Free' : '₹' + ebook.price %>
+                  </span>
+                </li>
+                <li class="flex items-center">
+                  <span class="w-28 text-gray-600">Purchases:</span>
+                  <span class="font-medium text-secondary">
+                    <%= ebook.buyers ? ebook.buyers.length : 0 %>
+                  </span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <% if (!hasPurchased && !isSeller && ebook.price > 0) { %>
+    <div
+      id="payment-modal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50"
+    >
+      <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-xl font-bold text-secondary">Purchase E-Book</h3>
+          <button id="close-modal" class="text-gray-500 hover:text-gray-700">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <div class="mb-4">
+          <p class="mb-2">You are purchasing:</p>
+          <div class="flex items-center bg-gray-50 p-3 rounded-lg">
+            <img
+              src="<%= ebook.coverImage %>"
+              alt="<%= ebook.title %>"
+              class="w-16 h-24 object-cover mr-3"
+            />
+            <div>
+              <h4 class="font-semibold text-secondary"><%= ebook.title %></h4>
+              <p class="text-sm text-text-light">by <%= ebook.author %></p>
+              <p class="text-primary font-bold mt-1">₹<%= ebook.price %></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-6">
+          <form id="payment-form">
+            <div
+              id="card-element"
+              class="mt-2 p-4 border border-gray-300 rounded-lg"
+            >
+              <!-- Stripe.js will inject the Payment Element here -->
+            </div>
+            <div id="card-errors" class="text-red-600 text-sm mt-2"></div>
+          </form>
+        </div>
+
+        <div class="flex justify-end">
+          <button
+            id="cancel-payment"
+            class="px-4 py-2 border border-gray-300 rounded-lg text-secondary mr-3 hover:bg-gray-50 transition"
+          >
+            Cancel
+          </button>
+          <button
+            id="submit-payment"
+            class="px-6 py-2 bg-primary text-secondary font-semibold rounded-lg hover:bg-primary-dark transition"
+          >
+            Pay ₹<%= ebook.price %>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div
+      id="success-modal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50"
+    >
+      <div
+        class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md text-center"
+      >
+        <div class="mb-4 text-green-500 text-5xl">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <h3 class="text-xl font-bold text-secondary mb-2">
+          Purchase Successful!
+        </h3>
+        <p class="text-text-light mb-6">
+          You can now download this e-book anytime.
+        </p>
+        <a
+          href="/ebooks/<%= ebook._id %>/download"
+          class="px-6 py-2 bg-primary text-secondary font-semibold rounded-lg hover:bg-primary-dark transition inline-block"
+        >
+          Download Now
+        </a>
+      </div>
+    </div>
+
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const stripe = Stripe("<%= stripePublishableKey %>");
+        let elements;
+        let paymentIntentId;
+
+        // Button event listeners
+        const purchaseBtn = document.getElementById("purchase-btn");
+        const closeModalBtn = document.getElementById("close-modal");
+        const cancelPaymentBtn = document.getElementById("cancel-payment");
+        const submitPaymentBtn = document.getElementById("submit-payment");
+        const paymentModal = document.getElementById("payment-modal");
+        const successModal = document.getElementById("success-modal");
+
+        if (purchaseBtn) {
+          purchaseBtn.addEventListener("click", async function () {
+            try {
+              // Create a payment intent
+              const response = await fetch(
+                "/ebooks/<%= ebook._id %>/create-payment-intent",
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                }
+              );
+
+              const data = await response.json();
+
+              if (data.success) {
+                // Initialize Stripe elements
+                paymentIntentId = data.clientSecret.split("_secret_")[0];
+
+                const options = {
+                  clientSecret: data.clientSecret,
+                  appearance: {
+                    theme: "stripe",
+                    variables: {
+                      colorPrimary: "#f0c264",
+                    },
+                  },
+                };
+
+                elements = stripe.elements(options);
+                const paymentElement = elements.create("payment");
+                paymentElement.mount("#card-element");
+
+                // Show payment modal
+                paymentModal.classList.remove("hidden");
+              } else {
+                alert(
+                  data.message || "Failed to create payment. Please try again."
+                );
+              }
+            } catch (error) {
+              console.error("Error creating payment intent:", error);
+              alert("Failed to initiate payment. Please try again.");
+            }
+          });
+        }
+
+        // Close modal buttons
+        if (closeModalBtn) {
+          closeModalBtn.addEventListener("click", function () {
+            paymentModal.classList.add("hidden");
+          });
+        }
+
+        if (cancelPaymentBtn) {
+          cancelPaymentBtn.addEventListener("click", function () {
+            paymentModal.classList.add("hidden");
+          });
+        }
+
+        // Handle form submission
+        if (submitPaymentBtn) {
+          submitPaymentBtn.addEventListener("click", async function () {
+            submitPaymentBtn.disabled = true;
+            submitPaymentBtn.textContent = "Processing...";
+
+            try {
+              const { error } = await stripe.confirmPayment({
+                elements,
+                confirmParams: {
+                  return_url: window.location.href,
+                },
+                redirect: "if_required",
+              });
+
+              if (error) {
+                document.getElementById("card-errors").textContent =
+                  error.message;
+                submitPaymentBtn.disabled = false;
+                submitPaymentBtn.textContent = "Pay ₹<%= ebook.price %>";
+              } else {
+                // Payment succeeded
+                const response = await fetch(
+                  "/ebooks/<%= ebook._id %>/payment-success",
+                  {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ paymentIntentId }),
+                  }
+                );
+
+                const result = await response.json();
+
+                if (result.success) {
+                  paymentModal.classList.add("hidden");
+                  successModal.classList.remove("hidden");
+
+                  // Auto close success modal and refresh page after 5 seconds
+                  setTimeout(() => {
+                    successModal.classList.add("hidden");
+                    window.location.reload();
+                  }, 5000);
+                } else {
+                  alert(
+                    "Payment recorded but there was a problem updating your account. Please contact support."
+                  );
+                }
+              }
+            } catch (err) {
+              console.error(err);
+              document.getElementById("card-errors").textContent =
+                "An unexpected error occurred. Please try again.";
+              submitPaymentBtn.disabled = false;
+              submitPaymentBtn.textContent = "Pay ₹<%= ebook.price %>";
+            }
+          });
+        }
+      });
+    </script>
+    <% } %>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

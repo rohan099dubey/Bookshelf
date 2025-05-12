@@ -1,0 +1,169 @@
+<%- include('../partials/header') %>
+
+<div class="container mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-3xl font-bold">My Orders</h1>
+    <div class="flex space-x-4">
+      <select id="statusFilter" class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary">
+        <option value="">All Status</option>
+        <option value="processing">Processing</option>
+        <option value="shipped">Shipped</option>
+        <option value="delivered">Delivered</option>
+        <option value="cancelled">Cancelled</option>
+      </select>
+      <input type="date" id="dateFilter" class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary">
+      <button onclick="applyFilters()" class="px-4 py-2 bg-primary text-dark rounded-md hover:bg-opacity-90 transition">
+        Apply Filters
+      </button>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-lg shadow-md overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order ID</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Items</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <% orders.forEach(order => { %>
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm font-medium text-gray-900">#<%= order.orderId %></div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-900"><%= new Date(order.orderDate).toLocaleDateString() %></div>
+                <div class="text-sm text-gray-500"><%= new Date(order.orderDate).toLocaleTimeString() %></div>
+              </td>
+              <td class="px-6 py-4">
+                <div class="text-sm text-gray-900"><%= order.items.length %> items</div>
+                <div class="text-sm text-gray-500">
+                  <% order.items.forEach((item, index) => { %>
+                    <%= item.title %><%= index < order.items.length - 1 ? ', ' : '' %>
+                  <% }) %>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-900">₹<%= order.totalAmount %></div>
+                <div class="text-sm text-gray-500"><%= order.paymentMethod %></div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <% if (order.orderStatus === 'processing') { %>
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                    Processing
+                  </span>
+                <% } else if (order.orderStatus === 'shipped') { %>
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                    Shipped
+                  </span>
+                <% } else if (order.orderStatus === 'delivered') { %>
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                    Delivered
+                  </span>
+                <% } else { %>
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                    Cancelled
+                  </span>
+                <% } %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <div class="flex items-center space-x-2">
+                  <a href="/buyer/orders/<%= order._id %>" class="text-primary hover:text-opacity-80">
+                    <i class="fas fa-eye"></i>
+                    View Details
+                  </a>
+                </div>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modify your order card in the orders list to include status information -->
+  <% orders.forEach(order => { %>
+    <div class="order-card bg-white rounded-lg shadow-md overflow-hidden mb-4">
+      <div class="p-4">
+        <div class="flex justify-between items-start">
+          <div>
+            <h3 class="font-medium">Order #<%= order._id.toString().substring(0, 8) %>...</h3>
+            <p class="text-sm text-gray-600">Placed on: <%= new Date(order.createdAt).toLocaleDateString() %></p>
+            <p class="text-sm font-medium mt-1">Total: $<%= order.totalAmount.toFixed(2) %></p>
+          </div>
+          
+          <!-- Display order status with appropriate coloring -->
+          <div>
+            <!-- Modify the status display to work with both field names -->
+            <span class="<%= 
+              (order.status || order.orderStatus) === 'processing' ? 'bg-yellow-100 text-yellow-800' : 
+              (order.status || order.orderStatus) === 'shipped' ? 'bg-blue-100 text-blue-800' : 
+              (order.status || order.orderStatus) === 'delivered' ? 'bg-green-100 text-green-800' : 
+              'bg-red-100 text-red-800' 
+            %> text-xs px-2 py-1 rounded-full">
+              <%= ((order.status || order.orderStatus) || 'processing').charAt(0).toUpperCase() + ((order.status || order.orderStatus) || 'processing').slice(1) %>
+            </span>
+            
+            <% if (order.status === 'shipped' && order.expectedDelivery) { %>
+              <p class="text-xs text-gray-600 mt-1 text-right">
+                Expected delivery: <%= new Date(order.expectedDelivery).toLocaleDateString() %>
+              </p>
+            <% } %>
+          </div>
+        </div>
+        
+        <!-- Display items count summary -->
+        <div class="mt-2 text-sm text-gray-600">
+          <%= order.items.length %> item<%= order.items.length > 1 ? 's' : '' %>
+        </div>
+        
+        <div class="mt-3 flex justify-end">
+          <a href="/buyer/orders/<%= order._id %>" class="text-primary hover:text-primary-dark text-sm font-medium">
+            View Details <i class="fas fa-chevron-right ml-1"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  <% }) %>
+</div>
+
+<script>
+  function applyFilters() {
+    const status = document.getElementById('statusFilter').value;
+    const date = document.getElementById('dateFilter').value;
+    
+    const rows = document.querySelectorAll('tbody tr');
+    
+    rows.forEach(row => {
+      const orderStatus = row.querySelector('td:nth-child(5) span').textContent.trim().toLowerCase();
+      const orderDateStr = row.querySelector('td:nth-child(2) div:first-child').textContent;
+      
+      // Parse the order date (format: MM/DD/YYYY)
+      const [month, day, year] = orderDateStr.split('/').map(num => parseInt(num));
+      const orderDate = new Date(year, month - 1, day);
+      
+      // Status filter
+      const statusMatch = !status || orderStatus === status.toLowerCase();
+      
+      // Date filter
+      let dateMatch = true;
+      if (date) {
+        const filterDate = new Date(date);
+        dateMatch = orderDate.getFullYear() === filterDate.getFullYear() &&
+                   orderDate.getMonth() === filterDate.getMonth() &&
+                   orderDate.getDate() === filterDate.getDate();
+      }
+      
+      // Show/hide row based on both filters
+      row.style.display = statusMatch && dateMatch ? '' : 'none';
+    });
+  }
+</script>
+
+<%- include('../partials/footer') %>

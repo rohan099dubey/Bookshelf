@@ -1,0 +1,199 @@
+<%- include('../partials/header') %>
+
+<div class="container mx-auto px-4 py-8">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-3xl font-bold">Complaint Management</h1>
+    <div class="text-sm text-gray-600">Total: <%= complaints.length %> complaints</div>
+  </div>
+
+  <!-- Dashboard Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+    <div class="bg-white rounded-lg shadow p-4 border-l-4 border-yellow-400">
+      <div class="flex items-center">
+        <div class="p-3 rounded-full bg-yellow-100 mr-4">
+          <i class="fas fa-clock text-yellow-400"></i>
+        </div>
+        <div>
+          <p class="text-sm text-gray-600">Pending</p>
+          <p class="text-xl font-bold"><%= complaints.filter(c => c.status === 'pending').length %></p>
+        </div>
+      </div>
+    </div>
+    <div class="bg-white rounded-lg shadow p-4 border-l-4 border-blue-400">
+      <div class="flex items-center">
+        <div class="p-3 rounded-full bg-blue-100 mr-4">
+          <i class="fas fa-spinner text-blue-400"></i>
+        </div>
+        <div>
+          <p class="text-sm text-gray-600">In Progress</p>
+          <p class="text-xl font-bold"><%= complaints.filter(c => c.status === 'in-progress').length %></p>
+        </div>
+      </div>
+    </div>
+    <div class="bg-white rounded-lg shadow p-4 border-l-4 border-green-400">
+      <div class="flex items-center">
+        <div class="p-3 rounded-full bg-green-100 mr-4">
+          <i class="fas fa-check-circle text-green-400"></i>
+        </div>
+        <div>
+          <p class="text-sm text-gray-600">Resolved</p>
+          <p class="text-xl font-bold"><%= complaints.filter(c => c.status === 'resolved').length %></p>
+        </div>
+      </div>
+    </div>
+    <div class="bg-white rounded-lg shadow p-4 border-l-4 border-red-400">
+      <div class="flex items-center">
+        <div class="p-3 rounded-full bg-red-100 mr-4">
+          <i class="fas fa-times-circle text-red-400"></i>
+        </div>
+        <div>
+          <p class="text-sm text-gray-600">Rejected</p>
+          <p class="text-xl font-bold"><%= complaints.filter(c => c.status === 'rejected').length %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+    <form class="flex flex-wrap items-end gap-4" id="complaintFilterForm" onsubmit="return false;">
+      <div class="w-full md:w-auto flex-1">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Filter by Status</label>
+        <select id="statusFilter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary">
+          <option value="all">All Statuses</option>
+          <option value="pending">Pending</option>
+          <option value="in-progress">In Progress</option>
+          <option value="resolved">Resolved</option>
+          <option value="rejected">Rejected</option>
+        </select>
+      </div>
+      <div class="w-full md:w-auto flex-1">
+        <label class="block text-sm font-medium text-gray-700 mb-1">User Type</label>
+        <select id="roleFilter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary">
+          <option value="all">All Users</option>
+          <option value="buyer">Buyers</option>
+          <option value="seller">Sellers</option>
+        </select>
+      </div>
+      <div class="w-full md:w-auto flex-1">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Source</label>
+        <select id="sourceFilter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary">
+          <option value="all">All Sources</option>
+          <option value="contact_form">Contact Form</option>
+          <option value="complaint_form">Complaint Form</option>
+        </select>
+      </div>
+      <div class="w-full md:w-auto flex-1">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Search</label>
+        <input type="text" id="searchInput" placeholder="Search by subject or description" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary">
+      </div>
+    </form>
+  </div>
+
+  <!-- Complaints List -->
+  <div class="space-y-6">
+    <% if (complaints.length === 0) { %>
+      <div class="bg-white rounded-lg shadow-md p-8 text-center">
+        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-inbox text-gray-400 text-2xl"></i>
+        </div>
+        <h3 class="text-xl font-medium mb-2">No Complaints Found</h3>
+        <p class="text-gray-500">No complaints match your current filters.</p>
+      </div>
+    <% } else { %>
+      <% complaints.forEach(complaint => { %>
+        <a href="/admin/complaints/<%= complaint._id %>" class="block bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow complaint-card" 
+           data-status="<%= complaint.status %>" 
+           data-role="<%= complaint.userRole %>"
+           data-source="<%= complaint.source %>">
+          <div class="border-b p-4 md:p-6">
+            <div class="flex flex-wrap justify-between items-start gap-4">
+              <div>
+                <div class="flex items-center">
+                  <h2 class="text-lg md:text-xl font-semibold"><%= complaint.subject %></h2>
+                  <span class="ml-3 <%= 
+                    complaint.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
+                    complaint.status === 'in-progress' ? 'bg-blue-100 text-blue-800' : 
+                    complaint.status === 'resolved' ? 'bg-green-100 text-green-800' : 
+                    'bg-red-100 text-red-800' 
+                  %> text-xs px-2 py-1 rounded-full">
+                    <%= complaint.status.charAt(0).toUpperCase() + complaint.status.slice(1) %>
+                  </span>
+                </div>
+                <p class="text-sm text-gray-600 mt-1"><i class="fas fa-calendar mr-1"></i> <%= new Date(complaint.createdAt).toLocaleDateString() %></p>
+              </div>
+              <div class="flex flex-col items-end gap-2">
+                <div class="flex items-center text-sm text-gray-500">
+                  <i class="fas fa-user mr-1"></i>
+                  <% if (complaint.user) { %>
+                    <span><%= complaint.user.name %> (<%= complaint.userRole %>)</span>
+                  <% } else if (complaint.guestInfo) { %>
+                    <span><%= complaint.guestInfo.name %> (Guest)</span>
+                  <% } else { %>
+                    <span>Anonymous Guest</span>
+                  <% } %>
+                </div>
+                <% if ((complaint.user && complaint.user.email) || (complaint.guestInfo && complaint.guestInfo.email)) { %>
+                  <div class="flex items-center text-sm text-gray-500">
+                    <i class="fas fa-envelope mr-1"></i>
+                    <span><%= complaint.user ? complaint.user.email : complaint.guestInfo.email %></span>
+                  </div>
+                <% } %>
+                <button class="text-primary hover:underline font-medium text-sm flex items-center mt-2">View Details <i class="fas fa-chevron-right ml-1"></i></button>
+              </div>
+            </div>
+            <div class="mt-3 text-gray-700 line-clamp-2"><%= complaint.description.length > 120 ? complaint.description.slice(0, 120) + '...' : complaint.description %></div>
+          </div>
+        </a>
+      <% }) %>
+    <% } %>
+  </div>
+</div>
+
+<script>
+  // Client-side filtering for complaints
+  document.addEventListener('DOMContentLoaded', function() {
+    const statusFilter = document.getElementById('statusFilter');
+    const roleFilter = document.getElementById('roleFilter');
+    const sourceFilter = document.getElementById('sourceFilter');
+    const searchInput = document.getElementById('searchInput');
+    const complaintCards = document.querySelectorAll('.complaint-card');
+    function filterComplaints() {
+      const statusValue = statusFilter.value;
+      const roleValue = roleFilter.value;
+      const sourceValue = sourceFilter.value;
+      const searchValue = searchInput.value.toLowerCase();
+      complaintCards.forEach(card => {
+        const cardStatus = card.dataset.status;
+        const cardRole = card.dataset.role;
+        const cardSource = card.dataset.source;
+        const cardText = card.textContent.toLowerCase();
+        const matchesStatus = statusValue === 'all' || cardStatus === statusValue;
+        const matchesRole = roleValue === 'all' || cardRole === roleValue;
+        const matchesSource = sourceValue === 'all' || cardSource === sourceValue;
+        const matchesSearch = searchValue === '' || cardText.includes(searchValue);
+        if (matchesStatus && matchesRole && matchesSource && matchesSearch) {
+          card.style.display = '';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+    statusFilter.addEventListener('change', filterComplaints);
+    roleFilter.addEventListener('change', filterComplaints);
+    sourceFilter.addEventListener('change', filterComplaints);
+    searchInput.addEventListener('input', filterComplaints);
+  });
+</script>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>
+
+<%- include('../partials/footer') %>

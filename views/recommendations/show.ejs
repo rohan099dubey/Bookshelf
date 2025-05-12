@@ -1,0 +1,230 @@
+<%- include('../partials/header') %>
+
+<div class="container mx-auto px-4 py-8 mt-16">
+  <div class="max-w-5xl mx-auto">
+    <div class="flex items-center mb-6">
+      <a
+        href="/recommendations"
+        class="text-secondary hover:text-primary transition mr-3"
+      >
+        <i class="fas fa-arrow-left"></i>
+      </a>
+      <h1 class="text-3xl font-bold text-secondary">Book Recommendation</h1>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+      <div class="p-6">
+        <!-- List header -->
+        <div
+          class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6"
+        >
+          <div class="flex items-center mb-4 md:mb-0">
+            <img
+              src="<%= list.creator.avatar %>"
+              alt="<%= list.creator.name %>"
+              class="w-12 h-12 rounded-full object-cover mr-3"
+            />
+            <div>
+              <h4 class="font-medium text-secondary">
+                <%= list.creator.name %>
+              </h4>
+              <p class="text-sm text-text-light">
+                <%= new Date(list.createdAt).toLocaleDateString('en-US', { day:
+                'numeric', month: 'short', year: 'numeric' }) %>
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-center space-x-4">
+            <button
+              id="upvote-btn"
+              data-id="<%= list._id %>"
+              class="flex items-center gap-2 px-4 py-2 rounded-lg <%= hasUpvoted ? 'bg-primary/20 text-primary' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' %> transition"
+            >
+              <i class="<%= hasUpvoted ? 'fas' : 'far' %> fa-thumbs-up"></i>
+              <span id="upvote-count"><%= list.upvotes %></span>
+            </button>
+
+            <% if (user && list.creator._id.toString() === user._id.toString())
+            { %>
+            <div class="flex gap-2">
+              <a
+                href="/recommendations/<%= list._id %>/edit"
+                class="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-lg transition"
+              >
+                <i class="fas fa-edit"></i>
+                <span>Edit</span>
+              </a>
+
+              <form
+                action="/recommendations/<%= list._id %>?_method=DELETE"
+                method="POST"
+                onsubmit="return confirm('Are you sure you want to delete this list?')"
+              >
+                <button
+                  type="submit"
+                  class="flex items-center gap-2 px-4 py-2 bg-red-100 text-red-600 hover:bg-red-200 rounded-lg transition"
+                >
+                  <i class="fas fa-trash-alt"></i>
+                  <span>Delete</span>
+                </button>
+              </form>
+            </div>
+            <% } %>
+          </div>
+        </div>
+
+        <!-- List title and description -->
+        <h2 class="text-2xl font-bold text-secondary mb-2">
+          <%= list.title %>
+        </h2>
+        <p class="text-text-light mb-8"><%= list.description %></p>
+
+        <!-- Books in the list -->
+        <div class="mb-8">
+          <h3
+            class="text-xl font-semibold text-secondary mb-4 flex items-center"
+          >
+            <i class="fas fa-book mr-2"></i>
+            Books in this List
+            <span
+              class="ml-2 px-2 py-0.5 bg-primary/20 text-primary text-sm rounded-full"
+            >
+              <%= list.books.length %>
+            </span>
+          </h3>
+
+          <% if (list.books.length === 0) { %>
+          <div class="bg-gray-50 p-6 rounded-lg text-center">
+            <div class="text-6xl mb-4 text-gray-300">
+              <i class="fas fa-book"></i>
+            </div>
+            <h4 class="text-lg font-semibold text-secondary mb-2">
+              No books in this list yet
+            </h4>
+            <% if (user && list.creator._id.toString() === user._id.toString())
+            { %>
+            <p class="text-text-light mb-4">
+              Add some books to your recommendation list!
+            </p>
+            <a
+              href="/recommendations/<%= list._id %>/edit"
+              class="inline-block px-4 py-2 bg-primary text-secondary font-semibold rounded-lg hover:bg-primary-dark transition"
+            >
+              Add Books
+            </a>
+            <% } %>
+          </div>
+          <% } else { %>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <% list.books.forEach(book => { %>
+            <div
+              class="flex bg-gray-50 rounded-lg overflow-hidden shadow-sm hover:shadow transition"
+            >
+              <img
+                src="<%= book.coverImage %>"
+                alt="<%= book.title %>"
+                class="w-28 h-40 object-cover"
+              />
+              <div class="p-4 flex flex-col">
+                <h4 class="font-semibold text-secondary mb-1 line-clamp-2">
+                  <%= book.title %>
+                </h4>
+                <p class="text-sm text-accent mb-2 line-clamp-1">
+                  <%= book.author %>
+                </p>
+
+                <div class="mt-auto">
+                  <% if (book.rating) { %>
+                  <div class="flex items-center text-sm mb-2">
+                    <div class="flex text-yellow-400 mr-1">
+                      <% for(let i=0; i < 5; i++) { %>
+                      <i
+                        class="<%= i < Math.floor(book.rating) ? 'fas' : (i < book.rating ? 'fas fa-star-half-alt' : 'far') %> fa-star text-xs"
+                      ></i>
+                      <% } %>
+                    </div>
+                    <span class="text-gray-500"
+                      ><%= book.rating.toFixed(1) %></span
+                    >
+                  </div>
+                  <% } %>
+
+                  <div class="flex items-center text-sm">
+                    <span class="font-semibold text-primary mr-2"
+                      >₹<%= book.discountPrice || book.price %></span
+                    >
+                    <% if (book.discountPrice && book.discountPrice <
+                    book.price) { %>
+                    <span class="line-through text-text-light text-xs"
+                      >₹<%= book.price %></span
+                    >
+                    <% } %>
+                  </div>
+
+                  <a
+                    href="/book/<%= book._id %>"
+                    class="block mt-2 text-xs text-right text-primary hover:text-primary-dark transition"
+                  >
+                    View Details
+                  </a>
+                </div>
+              </div>
+            </div>
+            <% }) %>
+          </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const upvoteBtn = document.getElementById('upvote-btn');
+
+    if (upvoteBtn) {
+      upvoteBtn.addEventListener('click', async function() {
+        <% if (!user) { %>
+          window.location.href = '/auth/login?redirect=/recommendations/<%= list._id %>';
+          return;
+        <% } %>
+
+        try {
+          const listId = this.getAttribute('data-id');
+          const response = await fetch(`/recommendations/${listId}/upvote`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+
+          const data = await response.json();
+
+          if (data.success) {
+            // Update upvote count
+            document.getElementById('upvote-count').textContent = data.upvotes;
+
+            // Toggle upvote button style
+            if (data.upvoted) {
+              upvoteBtn.classList.add('bg-primary/20', 'text-primary');
+              upvoteBtn.classList.remove('bg-gray-100', 'text-gray-600', 'hover:bg-gray-200');
+              upvoteBtn.querySelector('i').classList.remove('far');
+              upvoteBtn.querySelector('i').classList.add('fas');
+            } else {
+              upvoteBtn.classList.remove('bg-primary/20', 'text-primary');
+              upvoteBtn.classList.add('bg-gray-100', 'text-gray-600', 'hover:bg-gray-200');
+              upvoteBtn.querySelector('i').classList.remove('fas');
+              upvoteBtn.querySelector('i').classList.add('far');
+            }
+          }
+        } catch (error) {
+          console.error('Error upvoting list:', error);
+        }
+      });
+    }
+  });
+</script>
+
+<%- include('../partials/footer') %>

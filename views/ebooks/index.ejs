@@ -1,0 +1,256 @@
+<%- include('../partials/header') %>
+
+<div class="container mx-auto px-4 py-8 mt-16">
+  <div class="flex flex-col md:flex-row justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold text-secondary mb-4 md:mb-0">E-Book Marketplace</h1>
+    <div class="flex flex-col sm:flex-row gap-4">
+      <a
+        href="/ebooks/new"
+        class="bg-primary text-secondary font-semibold px-6 py-2 rounded-lg hover:bg-primary-dark transition duration-300 text-center"
+      >
+        <i class="fas fa-upload mr-2"></i> Upload E-Book
+      </a>
+      <a
+        href="/ebooks/my-uploads"
+        class="border-2 border-primary text-primary font-semibold px-6 py-2 rounded-lg hover:bg-primary hover:text-secondary transition duration-300 text-center"
+      >
+        <i class="fas fa-book mr-2"></i> My Uploads
+      </a>
+      <a
+        href="/ebooks/my-purchases"
+        class="border-2 border-gray-300 text-gray-600 font-semibold px-6 py-2 rounded-lg hover:bg-gray-100 transition duration-300 text-center"
+      >
+        <i class="fas fa-shopping-bag mr-2"></i> My Purchases
+      </a>
+    </div>
+  </div>
+
+  <!-- Filters and Search -->
+  <div class="bg-white p-4 mb-6 rounded-lg shadow">
+    <form action="/ebooks" method="GET" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div>
+        <label for="search" class="block text-sm font-medium text-secondary mb-1">Search</label>
+        <input
+          type="text"
+          id="search"
+          name="search"
+          value="<%= search %>"
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+          placeholder="Search by title, author..."
+        />
+      </div>
+      
+      <div>
+        <label for="category" class="block text-sm font-medium text-secondary mb-1">Category</label>
+        <select
+          id="category"
+          name="category"
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+        >
+          <option value="">All Categories</option>
+          <% categories.forEach(cat => { %>
+            <option value="<%= cat %>" <%= category === cat ? 'selected' : '' %>><%= cat %></option>
+          <% }) %>
+        </select>
+      </div>
+      
+      <div>
+        <label for="sort" class="block text-sm font-medium text-secondary mb-1">Sort By</label>
+        <select
+          id="sort"
+          name="sort"
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+        >
+          <option value="newest" <%= sort === 'newest' ? 'selected' : '' %>>Newest</option>
+          <option value="priceAsc" <%= sort === 'priceAsc' ? 'selected' : '' %>>Price: Low to High</option>
+          <option value="priceDesc" <%= sort === 'priceDesc' ? 'selected' : '' %>>Price: High to Low</option>
+          <option value="popular" <%= sort === 'popular' ? 'selected' : '' %>>Popular</option>
+        </select>
+      </div>
+      
+      <div>
+        <label for="priceRange" class="block text-sm font-medium text-secondary mb-1">Price Range</label>
+        <div class="flex items-center space-x-2">
+          <input
+            type="number"
+            id="minPrice"
+            name="minPrice"
+            value="<%= minPrice %>"
+            min="0"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+            placeholder="Min"
+          />
+          <span>-</span>
+          <input
+            type="number"
+            id="maxPrice"
+            name="maxPrice"
+            value="<%= maxPrice %>"
+            min="0"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+            placeholder="Max"
+          />
+        </div>
+      </div>
+      
+      <div class="flex items-end">
+        <button
+          type="submit"
+          class="w-full px-4 py-2 bg-primary text-secondary font-semibold rounded-lg hover:bg-primary-dark transition"
+        >
+          <i class="fas fa-search mr-2"></i> Apply Filters
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- E-books Grid -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <% if (ebooks.length === 0) { %>
+    <div class="col-span-full text-center py-10">
+      <div class="text-6xl mb-4 text-gray-300"><i class="fas fa-book"></i></div>
+      <h3 class="text-xl font-semibold text-secondary mb-2">No e-books found</h3>
+      <p class="text-text-light mb-4">Try adjusting your filters or upload your own e-book!</p>
+      <a
+        href="/ebooks/new"
+        class="inline-block bg-primary text-secondary font-semibold px-6 py-2 rounded-lg hover:bg-primary-dark transition duration-300"
+      >
+        Upload E-Book
+      </a>
+    </div>
+    <% } else { %>
+      <% ebooks.forEach(ebook => { %>
+        <div class="bg-white rounded-lg overflow-hidden shadow hover:shadow-md transition duration-300 flex flex-col">
+          <a href="/ebooks/<%= ebook._id %>" class="block relative">
+            <div class="h-64 bg-gray-100 overflow-hidden">
+              <img 
+                src="<%= ebook.coverImage %>" 
+                alt="<%= ebook.title %>" 
+                class="w-full h-full object-cover hover:scale-105 transition duration-300"
+              />
+              <div class="absolute top-2 right-2 bg-<%= ebook.price === 0 ? 'green' : 'primary' %>-100 text-<%= ebook.price === 0 ? 'green' : 'primary' %>-600 text-xs px-2 py-1 rounded-full font-medium">
+                <%= ebook.price === 0 ? 'Free' : '₹' + ebook.price %>
+              </div>
+              <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-gray-900 to-transparent text-white p-3">
+                <p class="text-sm font-medium line-clamp-1"><%= ebook.fileType.toUpperCase() %> E-Book</p>
+              </div>
+            </div>
+          </a>
+          
+          <div class="p-4 flex-grow">
+            <div class="flex items-center mb-2">
+              <img
+                src="<%= ebook.seller.avatar %>"
+                alt="<%= ebook.seller.name %>"
+                class="w-6 h-6 rounded-full object-cover mr-2"
+              />
+              <p class="text-xs text-text-light"><%= ebook.seller.name %></p>
+            </div>
+            
+            <h3 class="text-lg font-semibold text-secondary mb-1 line-clamp-2 hover:text-primary transition">
+              <a href="/ebooks/<%= ebook._id %>"><%= ebook.title %></a>
+            </h3>
+            
+            <p class="text-sm text-gray-600 mb-2 line-clamp-1">by <%= ebook.author %></p>
+            
+            <div class="flex flex-wrap gap-2 mb-3">
+              <span class="bg-gray-100 text-secondary text-xs px-2 py-1 rounded-full">
+                <%= ebook.category %>
+              </span>
+              <% if (ebook.rating > 0) { %>
+                <span class="bg-yellow-100 text-yellow-700 text-xs px-2 py-1 rounded-full flex items-center">
+                  <i class="fas fa-star mr-1 text-yellow-500"></i>
+                  <%= ebook.rating.toFixed(1) %>
+                </span>
+              <% } %>
+            </div>
+            
+            <p class="text-xs text-text-light mb-3 line-clamp-2"><%= ebook.description.substring(0, 100) %><%= ebook.description.length > 100 ? '...' : '' %></p>
+          </div>
+          
+          <div class="p-4 pt-0">
+            <a
+              href="/ebooks/<%= ebook._id %>"
+              class="block w-full text-center bg-primary text-secondary font-semibold py-2 rounded-lg hover:bg-primary-dark transition"
+            >
+              <%= ebook.price === 0 ? 'Download Free' : 'View Details' %>
+            </a>
+          </div>
+        </div>
+      <% }) %>
+    <% } %>
+  </div>
+
+  <!-- Pagination -->
+  <% if (totalPages > 1) { %>
+  <div class="flex justify-center mt-8">
+    <div class="flex">
+      <% if (currentPage > 1) { %>
+      <a
+        href="/ebooks?page=<%= currentPage - 1 %>&search=<%= search %>&category=<%= category %>&sort=<%= sort %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>"
+        class="px-4 py-2 mx-1 bg-white text-secondary rounded-lg border hover:bg-gray-50 transition"
+      >
+        <i class="fas fa-chevron-left"></i>
+      </a>
+      <% } %>
+      
+      <% 
+      // Define how many page links to show
+      const maxPagesToShow = 5;
+      let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+      let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+      
+      // Adjust if we're near the end
+      if (endPage - startPage + 1 < maxPagesToShow) {
+        startPage = Math.max(1, endPage - maxPagesToShow + 1);
+      }
+      
+      // Show first page if not included
+      if (startPage > 1) { %>
+        <a
+          href="/ebooks?page=1&search=<%= search %>&category=<%= category %>&sort=<%= sort %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>"
+          class="px-4 py-2 mx-1 bg-white text-secondary rounded-lg border hover:bg-gray-50 transition"
+        >
+          1
+        </a>
+        <% if (startPage > 2) { %>
+          <span class="px-4 py-2 mx-1 text-gray-500">...</span>
+        <% } %>
+      <% } %>
+      
+      <% for (let i = startPage; i <= endPage; i++) { %>
+      <a
+        href="/ebooks?page=<%= i %>&search=<%= search %>&category=<%= category %>&sort=<%= sort %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>"
+        class="px-4 py-2 mx-1 <%= i === currentPage ? 'bg-primary text-secondary' : 'bg-white text-secondary hover:bg-gray-50' %> rounded-lg border transition"
+      >
+        <%= i %>
+      </a>
+      <% } %>
+      
+      <% // Show last page if not included
+      if (endPage < totalPages) { 
+        if (endPage < totalPages - 1) { %>
+          <span class="px-4 py-2 mx-1 text-gray-500">...</span>
+        <% } %>
+        <a
+          href="/ebooks?page=<%= totalPages %>&search=<%= search %>&category=<%= category %>&sort=<%= sort %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>"
+          class="px-4 py-2 mx-1 bg-white text-secondary rounded-lg border hover:bg-gray-50 transition"
+        >
+          <%= totalPages %>
+        </a>
+      <% } %>
+      
+      <% if (currentPage < totalPages) { %>
+      <a
+        href="/ebooks?page=<%= currentPage + 1 %>&search=<%= search %>&category=<%= category %>&sort=<%= sort %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>"
+        class="px-4 py-2 mx-1 bg-white text-secondary rounded-lg border hover:bg-gray-50 transition"
+      >
+        <i class="fas fa-chevron-right"></i>
+      </a>
+      <% } %>
+    </div>
+  </div>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %> 

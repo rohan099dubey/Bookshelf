@@ -1,0 +1,164 @@
+<%- include('../partials/header') %>
+
+<div class="container mx-auto px-4 py-8 mt-16">
+  <div class="flex flex-col md:flex-row justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold text-secondary mb-4 md:mb-0">
+      Book Recommendations
+    </h1>
+    <div class="flex flex-col sm:flex-row gap-4">
+      <a
+        href="/recommendations/new"
+        class="bg-primary text-secondary font-semibold px-6 py-2 rounded-lg hover:bg-primary-dark transition duration-300 text-center"
+      >
+        <i class="fas fa-plus-circle mr-2"></i> Create New List
+      </a>
+      <a
+        href="/recommendations/my-lists"
+        class="border-2 border-primary text-primary font-semibold px-6 py-2 rounded-lg hover:bg-primary hover:text-secondary transition duration-300 text-center"
+      >
+        <i class="fas fa-list-alt mr-2"></i> My Lists
+      </a>
+    </div>
+  </div>
+
+  <!-- Sort options -->
+  <div class="bg-white p-4 mb-8 rounded-lg shadow">
+    <div class="flex flex-wrap gap-2">
+      <span class="text-secondary font-medium">Sort by:</span>
+      <a
+        href="/recommendations?sort=trending"
+        class="px-3 py-1 rounded-full text-sm <%= sort === 'trending' ? 'bg-primary text-secondary' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' %> transition"
+      >
+        Trending
+      </a>
+      <a
+        href="/recommendations?sort=newest"
+        class="px-3 py-1 rounded-full text-sm <%= sort === 'newest' ? 'bg-primary text-secondary' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' %> transition"
+      >
+        Newest
+      </a>
+    </div>
+  </div>
+
+  <!-- Recommendations list -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <% if (lists.length === 0) { %>
+    <div class="col-span-full text-center py-10">
+      <div class="text-6xl mb-4 text-gray-300">
+        <i class="fas fa-list-alt"></i>
+      </div>
+      <h3 class="text-xl font-semibold text-secondary mb-2">
+        No recommendation lists yet
+      </h3>
+      <p class="text-text-light mb-4">
+        Be the first to create a curated book list!
+      </p>
+      <a
+        href="/recommendations/new"
+        class="bg-primary text-secondary font-semibold px-6 py-2 rounded-lg hover:bg-primary-dark transition duration-300"
+      >
+        Create New List
+      </a>
+    </div>
+    <% } else { %> <% lists.forEach(list => { %>
+    <div
+      class="bg-white rounded-lg overflow-hidden shadow hover:shadow-md transition duration-300 flex flex-col h-full"
+    >
+      <div class="p-6 flex-grow">
+        <div class="flex items-center mb-4">
+          <img
+            src="<%= list.creator.avatar %>"
+            alt="<%= list.creator.name %>"
+            class="w-10 h-10 rounded-full object-cover mr-3"
+          />
+          <div>
+            <h4 class="font-medium text-secondary"><%= list.creator.name %></h4>
+            <p class="text-sm text-text-light">
+              <%= new Date(list.createdAt).toLocaleDateString('en-US', { day:
+              'numeric', month: 'short', year: 'numeric' }) %>
+            </p>
+          </div>
+        </div>
+        <h3
+          class="text-xl font-bold text-secondary mb-2 hover:text-primary transition duration-300"
+        >
+          <a href="/recommendations/<%= list._id %>"><%= list.title %></a>
+        </h3>
+        <p class="text-text-light mb-4 line-clamp-3"><%= list.description %></p>
+
+        <% if (list.books && list.books.length > 0) { %>
+        <div class="flex overflow-x-auto gap-2 pb-2 mb-4">
+          <% list.books.slice(0, 5).forEach(book => { %>
+          <img
+            src="<%= book.coverImage %>"
+            alt="<%= book.title %>"
+            class="w-16 h-24 object-cover rounded shadow-sm flex-shrink-0"
+            title="<%= book.title %>"
+          />
+          <% }) %> <% if (list.books.length > 5) { %>
+          <div
+            class="w-16 h-24 bg-gray-100 rounded flex items-center justify-center text-gray-500 flex-shrink-0"
+          >
+            +<%= list.books.length - 5 %> more
+          </div>
+          <% } %>
+        </div>
+        <% } else { %>
+        <p class="text-text-light italic mb-4">No books in this list yet</p>
+        <% } %>
+      </div>
+
+      <div class="px-6 py-3 bg-gray-50 flex justify-between items-center">
+        <div class="flex items-center">
+          <span class="flex items-center text-primary mr-3">
+            <i class="fas fa-thumbs-up mr-1"></i>
+            <span><%= list.upvotes %></span>
+          </span>
+          <span class="flex items-center text-primary">
+            <i class="fas fa-book mr-1"></i>
+            <span><%= list.books ? list.books.length : 0 %></span>
+          </span>
+        </div>
+        <a
+          href="/recommendations/<%= list._id %>"
+          class="text-primary hover:text-primary-dark transition-colors"
+        >
+          View list <i class="fas fa-arrow-right ml-1"></i>
+        </a>
+      </div>
+    </div>
+    <% }) %> <% } %>
+  </div>
+
+  <!-- Pagination -->
+  <% if (totalPages > 1) { %>
+  <div class="flex justify-center mt-8">
+    <div class="flex">
+      <% if (currentPage > 1) { %>
+      <a
+        href="/recommendations?page=<%= currentPage - 1 %>&sort=<%= sort %>"
+        class="px-4 py-2 mx-1 bg-white text-secondary rounded-lg border hover:bg-gray-50 transition"
+      >
+        <i class="fas fa-chevron-left"></i>
+      </a>
+      <% } %> <% for (let i = 1; i <= totalPages; i++) { %>
+      <a
+        href="/recommendations?page=<%= i %>&sort=<%= sort %>"
+        class="px-4 py-2 mx-1 <%= i === currentPage ? 'bg-primary text-secondary' : 'bg-white text-secondary hover:bg-gray-50' %> rounded-lg border transition"
+      >
+        <%= i %>
+      </a>
+      <% } %> <% if (currentPage < totalPages) { %>
+      <a
+        href="/recommendations?page=<%= currentPage + 1 %>&sort=<%= sort %>"
+        class="px-4 py-2 mx-1 bg-white text-secondary rounded-lg border hover:bg-gray-50 transition"
+      >
+        <i class="fas fa-chevron-right"></i>
+      </a>
+      <% } %>
+    </div>
+  </div>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %>

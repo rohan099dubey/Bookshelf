@@ -1,0 +1,254 @@
+<%- include('../partials/header') %>
+
+<div class="fixed top-0 left-0 right-0 bg-white border-b z-10 shadow-sm">
+  <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+    <div class="flex items-center">
+      <a href="/library" class="mr-4 text-gray-600 hover:text-gray-900" id="back-to-library">
+        <i class="fas fa-arrow-left"></i>
+      </a>
+      <h1 class="text-lg font-medium truncate"><%= book.title %></h1>
+    </div>
+    
+    <div class="flex items-center">
+      <div class="text-sm text-gray-600 mr-6">
+        Page <span id="current-page"><%= currentPage %></span> of <span>10</span>
+      </div>
+      
+      <div class="relative w-48 mr-6">
+        <div class="w-full bg-gray-200 rounded-full h-2">
+          <div id="progress-bar" class="bg-primary h-2 rounded-full" style="width: <%= progress %>%"></div>
+        </div>
+      </div>
+      
+      <button id="bookmark-btn" class="text-gray-500 hover:text-amber-500 mr-2">
+        <i class="far fa-bookmark"></i>
+      </button>
+      
+      <div class="relative" id="settings-dropdown">
+        <button class="text-gray-500 hover:text-gray-800">
+          <i class="fas fa-cog"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="pt-16 pb-16">
+  <div id="reader-container" class="container mx-auto px-4 py-8 max-w-3xl bg-white">
+    <div id="book-content" class="prose max-w-none">
+      <!-- Generate 10 pages of Lorem Ipsum content -->
+      <div class="book-page" data-page="1">
+        <h2 class="text-xl font-semibold mb-4">Chapter 1: Beginning</h2>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas eget augue quis enim commodo luctus. Nullam quis arcu finibus, ultrices dui ut, tempor nibh. Donec nec finibus felis. Donec eget tristique urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nullam pretium sollicitudin ipsum, non varius arcu convallis vitae. Nunc facilisis, enim quis venenatis congue, nibh magna congue magna, ut finibus est lorem quis sem.</p>
+        <p>Duis auctor porta ipsum, eu vestibulum turpis blandit et. Nunc maximus sapien sit amet risus ultrices faucibus. Curabitur feugiat mauris a ex iaculis iaculis. Etiam imperdiet enim eget metus dapibus, id sagittis turpis vehicula. Proin sem orci, eleifend vel congue vel, consequat nec dolor. Duis sodales lectus sed diam scelerisque, sit amet mattis justo tristique.</p>
+      </div>
+      
+      <div class="book-page hidden" data-page="2">
+        <p>Fusce accumsan lacus at auctor ullamcorper. Praesent rutrum turpis risus, eget sagittis justo tempor in. Vestibulum malesuada massa in sapien sagittis consectetur. Phasellus mollis purus in dui bibendum fermentum. Mauris id vestibulum neque. Suspendisse ornare quam sed est vestibulum, at luctus dui molestie.</p>
+        <p>Suspendisse rhoncus ante vel ligula tincidunt, at finibus tellus imperdiet. Quisque id mauris vehicula, convallis tellus vel, convallis augue. Integer vitae euismod odio, lacinia venenatis tellus. In hac habitasse platea dictumst. Duis pellentesque auctor ante, et commodo mi fringilla vel. Pellentesque finibus hendrerit commodo.</p>
+      </div>
+      
+      <div class="book-page hidden" data-page="3">
+        <h2 class="text-xl font-semibold mb-4">Chapter 2: Development</h2>
+        <p>Etiam vel tellus a magna dapibus placerat. Aliquam erat volutpat. Etiam dictum mauris vel pellentesque lacinia. Proin non ornare leo, et rhoncus purus. Aenean vestibulum est eget enim vehicula ullamcorper. Phasellus sagittis ex id lectus pharetra, quis pretium mi vestibulum. Donec metus arcu, fringilla vel elementum in, convallis vel ante.</p>
+        <p>Praesent nec eros vitae augue congue molestie at ac risus. Sed consequat libero nec diam venenatis, id facilisis lacus venenatis. Morbi rhoncus feugiat ex sit amet eleifend. Sed at diam elit. Maecenas bibendum vel nisi sed tristique. Aenean vitae tellus at ipsum blandit placerat.</p>
+      </div>
+      
+      <div class="book-page hidden" data-page="4">
+        <p>Nam placerat turpis ligula, ac pellentesque magna venenatis in. Duis vitae sem ac ex dignissim dapibus. Quisque pretium nisl ut purus tempor, vel dictum leo volutpat. Donec fringilla imperdiet varius. Suspendisse non bibendum augue. In vehicula venenatis ullamcorper.</p>
+        <p>Duis vel risus pharetra, varius tellus a, euismod velit. Donec in diam ac mi placerat feugiat. Cras cursus velit non dui maximus porttitor. Cras ut sodales mauris, sed pharetra velit. Nam lobortis pellentesque mauris. Nam sagittis massa at enim tempor, in facilisis dui placerat.</p>
+      </div>
+      
+      <div class="book-page hidden" data-page="5">
+        <h2 class="text-xl font-semibold mb-4">Chapter 3: Climax</h2>
+        <p>Vivamus tempus nibh sed urna facilisis, at aliquam nunc sollicitudin. Praesent aliquam dictum felis, eu mattis quam placerat sit amet. Proin dapibus dolor id neque dignissim, vel rutrum sem commodo. Fusce id elit ut tortor euismod interdum. Aenean vitae est sit amet risus ultricies vehicula.</p>
+        <p>Suspendisse potenti. Nulla efficitur tincidunt magna, nec facilisis magna interdum ut. Nulla facilisi. Nullam non tempor dui, non consequat metus. Nulla blandit fermentum est. Phasellus dignissim diam purus, non eleifend massa tempus id. Duis varius ex sit amet leo consectetur mollis.</p>
+      </div>
+      
+      <div class="book-page hidden" data-page="6">
+        <p>Sed ullamcorper, tellus vitae gravida finibus, nisi mi commodo augue, id placerat ligula diam in massa. Nam ornare lacinia aliquam. Duis congue dui a facilisis hendrerit. Quisque eu turpis id enim iaculis tempus. Vestibulum sit amet malesuada lectus.</p>
+        <p>Aliquam ut mattis lectus, nec vehicula nulla. Etiam quis ex molestie, eleifend mi at, molestie nulla. Nunc aliquet sit amet libero at luctus. Pellentesque ullamcorper arcu nisl, cursus consequat arcu imperdiet suscipit. Sed sodales faucibus tincidunt.</p>
+      </div>
+      
+      <div class="book-page hidden" data-page="7">
+        <h2 class="text-xl font-semibold mb-4">Chapter 4: Resolution</h2>
+        <p>Cras ac mauris blandit, pretium lectus a, sagittis erat. Aenean cursus consequat urna sit amet malesuada. Integer et felis eget nisi egestas viverra ut et ligula. Donec pulvinar leo arcu, at pretium orci mattis quis. Phasellus consequat magna eros, quis efficitur enim condimentum ut. Praesent in dictum mauris, nec fermentum nunc.</p>
+        <p>Nullam bibendum ligula quis bibendum ultrices. Suspendisse ut mauris at sapien dignissim cursus. Fusce finibus nisl at diam blandit eleifend. Suspendisse nec orci et tellus tincidunt feugiat. In eget nibh ex. Etiam ac gravida est.</p>
+      </div>
+      
+      <div class="book-page hidden" data-page="8">
+        <p>Cras quis purus a nibh tincidunt pellentesque. Nulla quis justo sit amet risus placerat maximus. Praesent venenatis pharetra nisl, quis euismod urna bibendum id. Quisque non lectus ligula. Nullam ac sodales mauris. Morbi at est sed tellus dictum mollis vitae quis lacus. Sed pretium ipsum magna.</p>
+        <p>Ut aliquet sem eros, eu feugiat diam pellentesque sit amet. Maecenas et urna mattis, blandit urna at, accumsan ipsum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Praesent vel leo quis dui laoreet interdum vel vitae massa.</p>
+      </div>
+      
+      <div class="book-page hidden" data-page="9">
+        <h2 class="text-xl font-semibold mb-4">Chapter 5: Conclusion</h2>
+        <p>Morbi tristique ligula ut enim fermentum, quis suscipit lorem porttitor. Nam luctus ultricies semper. Vestibulum hendrerit sem sit amet massa iaculis ullamcorper. Donec in pharetra enim. Proin interdum magna nibh, nec pharetra est tristique in. Aliquam ultrices tellus a leo lobortis porttitor.</p>
+        <p>Vivamus vel eros vitae orci ultricies elementum. Aliquam fermentum nisi ac quam blandit, sit amet ultricies ante ornare. Nam congue enim a blandit faucibus. Suspendisse id posuere augue, in condimentum elit. Maecenas cursus ex nec dolor sagittis, id vestibulum mi varius.</p>
+      </div>
+      
+      <div class="book-page hidden" data-page="10">
+        <p>Sed finibus elementum condimentum. Cras porttitor libero eros, sit amet feugiat justo euismod vitae. Fusce pharetra diam a tortor eleifend vestibulum. Donec eu tortor vel dolor congue pulvinar. Nulla facilisi. Mauris consequat, risus vel feugiat suscipit, dui tortor feugiat enim, quis dignissim lacus risus eget quam.</p>
+        <p>Pellentesque in diam commodo nulla placerat tincidunt. Curabitur quis justo hendrerit, iaculis mi id, tincidunt mi. Quisque ac libero eu mi pharetra porttitor. Duis ac facilisis nisl. Etiam ut ligula pharetra, elementum magna et, ultrices nisl. Vivamus volutpat ultrices ex, in faucibus elit. The End.</p>
+      </div>
+    </div>
+    
+    <div class="flex justify-between mt-8">
+      <button id="prev-page" class="page-button px-5 py-2 bg-gray-200 hover:bg-gray-300 rounded-md text-gray-800 transition duration-200">
+        <i class="fas fa-chevron-left mr-2"></i> Previous
+      </button>
+      <button id="next-page" class="page-button px-5 py-2 bg-primary hover:bg-opacity-90 rounded-md text-dark transition duration-200">
+        Next <i class="fas fa-chevron-right ml-2"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // DOM elements
+    const bookContent = document.getElementById('book-content');
+    const progressBar = document.getElementById('progress-bar');
+    const currentPageEl = document.getElementById('current-page');
+    const prevPageBtn = document.getElementById('prev-page');
+    const nextPageBtn = document.getElementById('next-page');
+    const bookmarkBtn = document.getElementById('bookmark-btn');
+    const backToLibraryLink = document.getElementById('back-to-library');
+    
+    // Initial values
+    let currentPage = <%= currentPage || 1 %>;
+    const bookId = '<%= book._id %>';
+    const TOTAL_PAGES = 10; // Fixed at exactly 10 pages
+    let currentProgress = <%= progress || 0 %>;
+    let bookmarked = <%= book.isBookmarked || false %>;
+    
+    // Initialize page display
+    showPage(currentPage);
+    currentPageEl.textContent = currentPage;
+    
+    // Set initial bookmark state
+    if (bookmarked) {
+      bookmarkBtn.innerHTML = '<i class="fas fa-bookmark text-amber-500"></i>';
+    }
+    
+    // Back to library button
+    if (backToLibraryLink) {
+      backToLibraryLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        saveProgress();
+        window.location.href = '/library?t=' + new Date().getTime();
+      });
+    }
+    
+    // Bookmark toggle
+    bookmarkBtn.addEventListener('click', function() {
+      bookmarked = !bookmarked;
+      
+      if (bookmarked) {
+        bookmarkBtn.innerHTML = '<i class="fas fa-bookmark text-amber-500"></i>';
+        saveBookmark(true);
+      } else {
+        bookmarkBtn.innerHTML = '<i class="far fa-bookmark"></i>';
+        saveBookmark(false);
+      }
+    });
+    
+    // Page navigation
+    prevPageBtn.addEventListener('click', function() {
+      if (currentPage > 1) {
+        currentPage--;
+        showPage(currentPage);
+        updateProgress();
+      }
+    });
+    
+    nextPageBtn.addEventListener('click', function() {
+      if (currentPage < TOTAL_PAGES) {
+        currentPage++;
+        showPage(currentPage);
+        updateProgress();
+      }
+    });
+    
+    // Function to display the current page
+    function showPage(pageNum) {
+      // Hide all pages
+      document.querySelectorAll('.book-page').forEach(page => {
+        page.classList.add('hidden');
+      });
+      
+      // Show selected page
+      const selectedPage = document.querySelector(`.book-page[data-page="${pageNum}"]`);
+      if (selectedPage) {
+        selectedPage.classList.remove('hidden');
+      }
+      
+      // Update page number display
+      currentPageEl.textContent = pageNum;
+      
+      // Update button states
+      prevPageBtn.disabled = pageNum <= 1;
+      prevPageBtn.classList.toggle('opacity-50', pageNum <= 1);
+      
+      nextPageBtn.disabled = pageNum >= TOTAL_PAGES;
+      nextPageBtn.classList.toggle('opacity-50', pageNum >= TOTAL_PAGES);
+    }
+    
+    // Update progress percentage
+    function updateProgress() {
+      // Calculate progress using 10 pages total
+      currentProgress = Math.round((currentPage / TOTAL_PAGES) * 100);
+      progressBar.style.width = `${currentProgress}%`;
+      
+      // Save progress to server
+      saveProgress();
+    }
+    
+    // Save progress to server
+    function saveProgress() {
+      fetch('/library/update-progress', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          bookId: bookId,
+          progress: currentProgress,
+          currentPage: currentPage
+        })
+      })
+      .then(response => response.json())
+      .catch(error => console.error('Error saving progress:', error));
+    }
+    
+    // Save bookmark state
+    function saveBookmark(isBookmarked) {
+      fetch('/library/bookmark', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          bookId: bookId,
+          currentPage: currentPage,
+          isBookmarked: isBookmarked
+        })
+      })
+      .then(response => response.json())
+      .catch(error => console.error('Error updating bookmark:', error));
+    }
+    
+    // Auto-save progress when leaving page
+    window.addEventListener('beforeunload', function() {
+      const data = JSON.stringify({
+        bookId: bookId,
+        progress: currentProgress,
+        currentPage: currentPage
+      });
+      
+      navigator.sendBeacon('/library/update-progress', data);
+    });
+  });
+</script>
+
+<%- include('../partials/footer') %>

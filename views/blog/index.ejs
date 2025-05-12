@@ -1,0 +1,157 @@
+<%- include('../partials/header') %>
+
+<div class="container mx-auto px-4 py-8 mt-16">
+  <div class="flex flex-col md:flex-row justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold text-secondary mb-4 md:mb-0">Reader Blogs</h1>
+    <div class="flex flex-col sm:flex-row gap-4">
+      <a
+        href="/blog/new"
+        class="bg-primary text-secondary font-semibold px-6 py-2 rounded-lg hover:bg-primary-dark transition duration-300 text-center"
+      >
+        <i class="fas fa-pen-fancy mr-2"></i> Write New Blog
+      </a>
+      <a
+        href="/blog/my-blogs"
+        class="border-2 border-primary text-primary font-semibold px-6 py-2 rounded-lg hover:bg-primary hover:text-secondary transition duration-300 text-center"
+      >
+        <i class="fas fa-user-edit mr-2"></i> My Blogs
+      </a>
+    </div>
+  </div>
+
+  <!-- Sort options -->
+  <div class="bg-white p-4 mb-8 rounded-lg shadow">
+    <div class="flex flex-wrap gap-2">
+      <span class="text-secondary font-medium">Sort by:</span>
+      <a
+        href="/blog?sort=recent"
+        class="px-3 py-1 rounded-full text-sm <%= sort === 'recent' ? 'bg-primary text-secondary' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' %> transition"
+      >
+        Recent
+      </a>
+      <a
+        href="/blog?sort=popular"
+        class="px-3 py-1 rounded-full text-sm <%= sort === 'popular' ? 'bg-primary text-secondary' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' %> transition"
+      >
+        Popular
+      </a>
+    </div>
+  </div>
+
+  <!-- Blog list -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <% if (blogs.length === 0) { %>
+    <div class="col-span-full text-center py-10">
+      <div class="text-6xl mb-4 text-gray-300"><i class="fas fa-blog"></i></div>
+      <h3 class="text-xl font-semibold text-secondary mb-2">No blogs yet</h3>
+      <p class="text-text-light mb-4">Be the first to write a blog post!</p>
+      <a
+        href="/blog/new"
+        class="bg-primary text-secondary font-semibold px-6 py-2 rounded-lg hover:bg-primary-dark transition duration-300"
+      >
+        Write New Blog
+      </a>
+    </div>
+    <% } else { %> <% blogs.forEach(blog => { %>
+    <div
+      class="bg-white rounded-lg overflow-hidden shadow hover:shadow-md transition duration-300 flex flex-col h-full"
+    >
+      <div class="p-6 flex-grow">
+        <div class="flex items-center mb-4">
+          <img
+            src="<%= blog.author.avatar %>"
+            alt="<%= blog.author.name %>"
+            class="w-10 h-10 rounded-full object-cover mr-3"
+          />
+          <div>
+            <h4 class="font-medium text-secondary"><%= blog.author.name %></h4>
+            <p class="text-sm text-text-light">
+              <%= new Date(blog.createdAt).toLocaleDateString('en-US', { day:
+              'numeric', month: 'short', year: 'numeric' }) %>
+            </p>
+          </div>
+        </div>
+        <h3
+          class="text-xl font-bold text-secondary mb-2 hover:text-primary transition duration-300"
+        >
+          <a href="/blog/<%= blog._id %>"><%= blog.title %></a>
+        </h3>
+        <p class="text-text-light mb-4 line-clamp-3">
+          <%= blog.content.substring(0, 150) %><%= blog.content.length > 150 ?
+          '...' : '' %>
+        </p>
+
+        <% if (blog.bookReference) { %>
+        <div class="flex items-center mt-auto mb-4 p-3 bg-gray-50 rounded-lg">
+          <img
+            src="<%= blog.bookReference.coverImage %>"
+            alt="<%= blog.bookReference.title %>"
+            class="w-12 h-16 object-cover rounded mr-3"
+          />
+          <div>
+            <p class="text-xs text-text-light">Review for</p>
+            <h5 class="font-medium text-secondary">
+              <%= blog.bookReference.title %>
+            </h5>
+            <p class="text-sm text-text-light">
+              by <%= blog.bookReference.author %>
+            </p>
+          </div>
+        </div>
+        <% } %>
+      </div>
+
+      <div class="px-6 py-3 bg-gray-50 flex justify-between items-center">
+        <div class="flex items-center">
+          <span class="flex items-center text-primary mr-3">
+            <i class="fas fa-thumbs-up mr-1"></i>
+            <span><%= blog.upvotes %></span>
+          </span>
+          <span class="flex items-center text-primary">
+            <i class="fas fa-comment mr-1"></i>
+            <span>0</span>
+          </span>
+        </div>
+        <a
+          href="/blog/<%= blog._id %>"
+          class="text-primary hover:text-primary-dark transition-colors"
+        >
+          Read more <i class="fas fa-arrow-right ml-1"></i>
+        </a>
+      </div>
+    </div>
+    <% }) %> <% } %>
+  </div>
+
+  <!-- Pagination -->
+  <% if (totalPages > 1) { %>
+  <div class="flex justify-center mt-8">
+    <div class="flex">
+      <% if (currentPage > 1) { %>
+      <a
+        href="/blog?page=<%= currentPage - 1 %>&sort=<%= sort %>"
+        class="px-4 py-2 mx-1 bg-white text-secondary rounded-lg border hover:bg-gray-50 transition"
+      >
+        <i class="fas fa-chevron-left"></i>
+      </a>
+      <% } %> <% for (let i = 1; i <= totalPages; i++) { %>
+      <a
+        href="/blog?page=<%= i %>&sort=<%= sort %>"
+        class="px-4 py-2 mx-1 <%= i === currentPage ? 'bg-primary text-secondary' : 'bg-white text-secondary hover:bg-gray-50' %> rounded-lg border transition"
+      >
+        <%= i %>
+      </a>
+      <% } %> <% if (currentPage < totalPages) { %>
+      <a
+        href="/blog?page=<%= currentPage + 1 %>&sort=<%= sort %>"
+        class="px-4 py-2 mx-1 bg-white text-secondary rounded-lg border hover:bg-gray-50 transition"
+      >
+        <i class="fas fa-chevron-right"></i>
+      </a>
+      <% } %>
+    </div>
+  </div>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %>

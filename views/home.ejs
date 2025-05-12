@@ -1,291 +1,492 @@
 <%- include('partials/header') %>
 
 <!-- Hero Section -->
-<section class="bg-primary py-12 md:py-20 -mt-12">
-  <div class="container mx-auto px-4">
-    <div class="flex flex-col md:flex-row items-center">
-      <div class="md:w-1/2 mb-8 md:mb-0">
-        <h1 class="text-4xl md:text-5xl font-bold text-dark mb-4">Discover Your Next Favorite Book</h1>
-        <p class="text-lg text-dark mb-6">Browse thousands of books, from bestsellers to rare finds. Buy new or second-hand books at the best prices.</p>
-        <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-          <a href="/buyer/browse" class="bg-dark text-white px-6 py-3 rounded-md text-center hover:bg-opacity-90 transition">Browse Books</a>
-          <a href="/auth/register?role=seller" class="bg-white text-dark px-6 py-3 rounded-md text-center border border-dark hover:bg-gray-100 transition">Become a Seller</a>
-        </div>
+<section
+  class="relative overflow-hidden bg-gradient-to-r from-secondary to-secondary/80 py-20 text-white"
+>
+  <div class="container mx-auto px-4 relative z-10">
+    <div class="max-w-3xl">
+      <h1 class="text-4xl md:text-5xl font-bold mb-4">
+        Discover Your Next Great Read
+      </h1>
+      <p class="text-xl mb-8">
+        Where Books Meet Community. Join us to buy, sell, share, and connect
+        over your favorite books.
+      </p>
+      <p class="text-lg italic mb-6">"Read. Share. Grow Together."</p>
+      <div class="flex flex-col sm:flex-row gap-4">
+        <a
+          href="/books"
+          class="bg-primary text-secondary font-bold py-3 px-6 rounded-lg hover:bg-primary-dark transition duration-300 text-center"
+        >
+          Browse Books
+        </a>
+        <a
+          href="/auth/register"
+          class="bg-white text-secondary font-bold py-3 px-6 rounded-lg hover:bg-gray-100 transition duration-300 text-center"
+        >
+          Join BOOKSHELF
+        </a>
       </div>
-      <div class="md:w-1/2 p-4 ">
-        <!-- <img src="/img/hero-image.png" alt="Books Collection" class="rounded-lg shadow-lg"> -->
-        <img src="https://i.guim.co.uk/img/media/77e3e93d6571da3a5d77f74be57e618d5d930430/0_0_2560_1536/master/2560.jpg?width=1200&height=900&quality=85&auto=format&fit=crop&s=c99740fab952ee29d238d75272b98a61" alt="Books Collection" class="rounded-lg shadow-lg" style="width: 1200px; height: 600px;" >
-      </div>
-    </div> 
+    </div>
   </div>
-</section> 
+  <div class="absolute right-0 bottom-0 w-1/3 h-full opacity-10">
+    <img
+      src="/images/book-pattern.png"
+      alt="Book Pattern"
+      class="w-full h-full object-cover"
+    />
+  </div>
+</section>
 
 <!-- Features Section -->
-<section class="py-12 bg-white">
+<section class="py-16 bg-gray-50">
   <div class="container mx-auto px-4">
-    <h2 class="text-3xl font-bold text-center mb-12">Why Choose Bookish?</h2>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <div class="text-center p-6 bg-light rounded-lg shadow-sm">
-        <div class="bg-primary rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-          <i class="fas fa-book text-2xl text-dark"></i>
+    <h2 class="text-3xl font-bold text-center text-secondary mb-12">
+      Discover What BOOKSHELF Offers
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <!-- Feature 1 -->
+      <div
+        class="bg-white rounded-lg shadow-md p-6 flex flex-col items-center text-center transition duration-300 hover:shadow-lg"
+      >
+        <div
+          class="w-16 h-16 bg-primary/10 text-primary rounded-full flex items-center justify-center mb-4"
+        >
+          <i class="fas fa-book text-2xl"></i>
         </div>
-        <h3 class="text-xl font-semibold mb-2">Vast Collection</h3>
-        <p class="text-gray-600">Explore thousands of books across various genres, from bestsellers to rare finds.</p>
+        <h3 class="text-xl font-bold text-secondary mb-2">Buy & Sell Books</h3>
+        <p class="text-text-light">
+          Find new and used books at great prices or sell your own books to
+          fellow readers.
+        </p>
+        <a
+          href="/books"
+          class="mt-4 text-primary hover:text-primary-dark font-medium"
+        >
+          Browse Marketplace <i class="fas fa-arrow-right ml-1"></i>
+        </a>
       </div>
-      <div class="text-center p-6 bg-light rounded-lg shadow-sm">
-        <div class="bg-primary rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-          <i class="fas fa-hand-holding-usd text-2xl text-dark"></i>
+
+      <!-- Feature 2 -->
+      <div
+        class="bg-white rounded-lg shadow-md p-6 flex flex-col items-center text-center transition duration-300 hover:shadow-lg"
+      >
+        <div
+          class="w-16 h-16 bg-primary/10 text-primary rounded-full flex items-center justify-center mb-4"
+        >
+          <i class="fas fa-comment-alt text-2xl"></i>
         </div>
-        <h3 class="text-xl font-semibold mb-2">Second-Hand Marketplace</h3>
-        <p class="text-gray-600">Buy and sell used books at affordable prices, giving books a second life.</p>
+        <h3 class="text-xl font-bold text-secondary mb-2">Reader Blog</h3>
+        <p class="text-text-light">
+          Share your thoughts, reviews, and insights about books with our
+          community.
+        </p>
+        <a
+          href="/blog"
+          class="mt-4 text-primary hover:text-primary-dark font-medium"
+        >
+          Explore Blogs <i class="fas fa-arrow-right ml-1"></i>
+        </a>
       </div>
-      <div class="text-center p-6 bg-light rounded-lg shadow-sm">
-        <div class="bg-primary rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-          <i class="fas fa-video text-2xl text-dark"></i>
+
+      <!-- Feature 3 -->
+      <div
+        class="bg-white rounded-lg shadow-md p-6 flex flex-col items-center text-center transition duration-300 hover:shadow-lg"
+      >
+        <div
+          class="w-16 h-16 bg-primary/10 text-primary rounded-full flex items-center justify-center mb-4"
+        >
+          <i class="fas fa-list-alt text-2xl"></i>
         </div>
-        <h3 class="text-xl font-semibold mb-2">Video Reviews</h3>
-        <p class="text-gray-600">Watch video reviews and recommendations from fellow book lovers.</p>
+        <h3 class="text-xl font-bold text-secondary mb-2">Recommendations</h3>
+        <p class="text-text-light">
+          Create and discover curated book lists for every mood, genre, and
+          occasion.
+        </p>
+        <a
+          href="/recommendations"
+          class="mt-4 text-primary hover:text-primary-dark font-medium"
+        >
+          Find Lists <i class="fas fa-arrow-right ml-1"></i>
+        </a>
+      </div>
+
+      <!-- Feature 4 -->
+      <div
+        class="bg-white rounded-lg shadow-md p-6 flex flex-col items-center text-center transition duration-300 hover:shadow-lg"
+      >
+        <div
+          class="w-16 h-16 bg-primary/10 text-primary rounded-full flex items-center justify-center mb-4"
+        >
+          <i class="fas fa-users text-2xl"></i>
+        </div>
+        <h3 class="text-xl font-bold text-secondary mb-2">Communities</h3>
+        <p class="text-text-light">
+          Join groups based on genres, universities, or interests to connect
+          with like-minded readers.
+        </p>
+        <a
+          href="/groups"
+          class="mt-4 text-primary hover:text-primary-dark font-medium"
+        >
+          Join Communities <i class="fas fa-arrow-right ml-1"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- New Features Section -->
+<section class="py-16">
+  <div class="container mx-auto px-4">
+    <h2 class="text-3xl font-bold text-center text-secondary mb-4">
+      Explore Our New Features
+    </h2>
+    <p class="text-center text-text-light max-w-3xl mx-auto mb-12">
+      We've added exciting new ways for you to connect with books and fellow
+      readers.
+    </p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+      <!-- E-books -->
+      <div
+        class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl overflow-hidden"
+      >
+        <div class="p-8">
+          <div
+            class="w-14 h-14 bg-blue-500 text-white rounded-lg flex items-center justify-center mb-4"
+          >
+            <i class="fas fa-tablet-alt text-2xl"></i>
+          </div>
+          <h3 class="text-xl font-bold text-secondary mb-3">
+            E-Book Marketplace
+          </h3>
+          <p class="text-text-light mb-4">
+            Buy, sell, and share digital books in various formats. From
+            textbooks to novels, find e-books for every reader.
+          </p>
+          <a
+            href="/ebooks"
+            class="inline-flex items-center text-blue-600 font-medium hover:text-blue-800 transition"
+          >
+            Explore E-Books <i class="fas fa-arrow-right ml-2"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- University Groups -->
+      <div
+        class="bg-gradient-to-br from-green-50 to-teal-50 rounded-xl overflow-hidden"
+      >
+        <div class="p-8">
+          <div
+            class="w-14 h-14 bg-green-500 text-white rounded-lg flex items-center justify-center mb-4"
+          >
+            <i class="fas fa-university text-2xl"></i>
+          </div>
+          <h3 class="text-xl font-bold text-secondary mb-3">
+            University Groups
+          </h3>
+          <p class="text-text-light mb-4">
+            Connect with students from your university. Share course materials,
+            study resources, and academic books.
+          </p>
+          <a
+            href="/universities"
+            class="inline-flex items-center text-green-600 font-medium hover:text-green-800 transition"
+          >
+            Find Your University <i class="fas fa-arrow-right ml-2"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Genre Communities -->
+      <div
+        class="bg-gradient-to-br from-purple-50 to-fuchsia-50 rounded-xl overflow-hidden"
+      >
+        <div class="p-8">
+          <div
+            class="w-14 h-14 bg-purple-500 text-white rounded-lg flex items-center justify-center mb-4"
+          >
+            <i class="fas fa-book-open text-2xl"></i>
+          </div>
+          <h3 class="text-xl font-bold text-secondary mb-3">
+            Genre Communities
+          </h3>
+          <p class="text-text-light mb-4">
+            Find your reading tribe based on the genres you love. Discuss books,
+            share recommendations, and connect with fellow fans.
+          </p>
+          <a
+            href="/groups"
+            class="inline-flex items-center text-purple-600 font-medium hover:text-purple-800 transition"
+          >
+            Join a Genre <i class="fas fa-arrow-right ml-2"></i>
+          </a>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- Featured Books Section -->
-<section class="py-12 bg-light">
+<section class="py-16 bg-gray-50">
   <div class="container mx-auto px-4">
     <div class="flex justify-between items-center mb-8">
-      <h2 class="text-2xl font-bold">Featured Books</h2>
-      <a href="/buyer/browse" class="text-dark hover:text-primary">View All <i class="fas fa-arrow-right ml-1"></i></a>
+      <h2 class="text-3xl font-bold text-secondary">Featured Books</h2>
+      <a href="/books" class="text-primary hover:text-primary-dark font-medium">
+        View All <i class="fas fa-arrow-right ml-1"></i>
+      </a>
     </div>
-    
-    <!-- Auto-Advancing Carousel -->
-    <div class="relative" id="featured-carousel">
-      <div class="overflow-hidden">
-        <div class="flex transition-transform duration-500 ease-in-out" id="carousel-inner">
-          <% featuredBooks.forEach((book, index) => { %>
-            <div class="w-full md:w-1/4 flex-shrink-0 px-2 book-card <%= index === 0 ? 'active' : '' %>">
-              <div class="bg-white rounded-lg shadow-md overflow-hidden h-full">
-                <a href="/buyer/book/<%= book._id %>">
-                  <img src="<%= book.coverImage %>" alt="<%= book.title %>" class="w-full h-64 object-cover">
-                  <div class="p-4">
-                    <h3 class="text-lg font-semibold mb-1 truncate"><%= book.title %></h3>
-                    <p class="text-gray-600 mb-2"><%= book.author %></p>
-                    <div class="flex justify-between items-center">
-                      <div>
-                        <span class="text-lg font-bold">₹<%= book.discountPrice || book.price %></span>
-                        <% if (book.discountPrice && book.discountPrice < book.price) { %>
-                          <span class="text-sm text-gray-500 line-through ml-1">₹<%= book.price %></span>
-                        <% } %>
-                      </div>
-                      <% if (book.condition === 'used') { %>
-                        <span class="bg-amber-100 text-amber-800 text-xs px-2 py-1 rounded-full">Used</span>
-                      <% } %>
-                    </div>
-                  </div>
-                </a>
-              </div>
-            </div>
-          <% }) %>
-        </div>
-      </div>
-      <button class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white rounded-full w-10 h-10 shadow-md flex items-center justify-center z-10" id="prev-btn">
-        <i class="fas fa-chevron-left"></i>
-      </button>
-      <button class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white rounded-full w-10 h-10 shadow-md flex items-center justify-center z-10" id="next-btn">
-        <i class="fas fa-chevron-right"></i>
-      </button>
-    </div>
-  </div>
-</section>
 
-<!-- New Arrivals Section -->
-<section class="py-12 bg-white">
-  <div class="container mx-auto px-4">
-    <div class="flex justify-between items-center mb-8">
-      <h2 class="text-2xl font-bold">New Arrivals</h2>
-      <a href="/buyer/browse?sort=newest" class="text-dark hover:text-primary">View All <i class="fas fa-arrow-right ml-1"></i></a>
-    </div>
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-      <% newArrivals.slice(0, 4).forEach(book => { %>
-        <div class="bg-light rounded-lg shadow-sm overflow-hidden">
-          <a href="/buyer/book/<%= book._id %>">
-            <img src="<%= book.coverImage %>" alt="<%= book.title %>" class="w-full h-56 object-cover">
-            <div class="p-4">
-              <h3 class="text-lg font-semibold mb-1 truncate"><%= book.title %></h3>
-              <p class="text-gray-600 mb-2"><%= book.author %></p>
-              <div class="flex justify-between items-center">
-                <div>
-                  <span class="text-lg font-bold">₹<%= book.discountPrice || book.price %></span>
-                  <% if (book.discountPrice && book.discountPrice < book.price) { %>
-                    <span class="text-sm text-gray-500 line-through ml-1">₹<%= book.price %></span>
-                  <% } %>
-                </div>
-                <% if (book.condition === 'used') { %>
-                  <span class="bg-amber-100 text-amber-800 text-xs px-2 py-1 rounded-full">Used</span>
-                <% } %>
-              </div>
-            </div>
-          </a>
-        </div>
-      <% }) %>
-    </div>
-  </div>
-</section>
+    <div
+      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+    >
+      <% if (featuredBooks && featuredBooks.length > 0) { %> <%
+      featuredBooks.forEach(book => { %>
+      <div
+        class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition duration-300"
+      >
+        <a href="/book/<%= book._id %>" class="block relative overflow-hidden">
+          <img
+            src="<%= book.coverImage %>"
+            alt="<%= book.title %>"
+            class="w-full h-64 object-cover transition-transform duration-300 hover:scale-105"
+          />
+          <% if (book.discountPrice && book.discountPrice < book.price) { %>
+          <div
+            class="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full font-bold"
+          >
+            <%= Math.round((1 - book.discountPrice / book.price) * 100) %>% OFF
+          </div>
+          <% } %>
+        </a>
+        <div class="p-4">
+          <h3
+            class="font-bold text-secondary hover:text-primary transition duration-300 mb-1 line-clamp-1"
+          >
+            <a href="/book/<%= book._id %>"><%= book.title %></a>
+          </h3>
+          <p class="text-sm text-accent mb-2"><%= book.author %></p>
 
-<!-- Trending Books Section -->
-<section class="py-12 bg-light">
-  <div class="container mx-auto px-4">
-    <div class="flex justify-between items-center mb-8">
-      <h2 class="text-2xl font-bold">Trending Now</h2>
-      <a href="/buyer/browse?sort=rating" class="text-dark hover:text-primary">View All <i class="fas fa-arrow-right ml-1"></i></a>
-    </div>
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-      <% trendingBooks.slice(0, 4).forEach(book => { %>
-        <div class="bg-white rounded-lg shadow-md overflow-hidden">
-          <a href="/buyer/book/<%= book._id %>">
-            <img src="<%= book.coverImage %>" alt="<%= book.title %>" class="w-full h-56 object-cover">
-            <div class="p-4">
-              <h3 class="text-lg font-semibold mb-1 truncate"><%= book.title %></h3>
-              <p class="text-gray-600 mb-2"><%= book.author %></p>
-              <div class="flex justify-between items-center">
-                <div>
-                  <span class="text-lg font-bold">₹<%= book.discountPrice || book.price %></span>
-                  <% if (book.discountPrice && book.discountPrice < book.price) { %>
-                    <span class="text-sm text-gray-500 line-through ml-1">₹<%= book.price %></span>
-                  <% } %>
-                </div>
-                <div class="flex items-center">
-                  <% for(let i = 0; i < 5; i++) { %>
-                    <i class="fas fa-star <%= i < Math.round(book.rating) ? 'text-yellow-400' : 'text-gray-300' %> text-sm"></i>
-                  <% } %>
-                </div>
-              </div>
-            </div>
-          </a>
-        </div>
-      <% }) %>
-    </div>
-  </div>
-</section>
-
-<!-- Testimonials Section -->
-<section class="py-12 bg-white">
-  <div class="container mx-auto px-4">
-    <h2 class="text-3xl font-bold text-center mb-12">What Our Customers Say</h2>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <div class="bg-light p-6 rounded-lg shadow-sm">
-        <div class="flex items-center mb-4">
-          <img src="/img/testimonials/user1.jpg" alt="User" class="w-12 h-12 rounded-full mr-4">
-          <div>
-            <h4 class="font-semibold">Rahul Sharma</h4>
-            <div class="flex">
-              <% for(let i = 0; i < 5; i++) { %>
-                <i class="fas fa-star <%= i < 5 ? 'text-yellow-400' : 'text-gray-300' %> text-sm"></i>
+          <div class="flex items-center mb-2">
+            <div class="flex text-yellow-400 mr-1">
+              <% for(let i=0; i < 5; i++) { %>
+              <i
+                class="<%= i < Math.floor(book.rating) ? 'fas' : (i < book.rating ? 'fas fa-star-half-alt' : 'far') %> fa-star text-xs"
+              ></i>
               <% } %>
             </div>
+            <span class="text-xs text-gray-500"
+              >(<%= book.totalRatings %>)</span
+            >
           </div>
-        </div>
-        <p class="text-gray-600">"I love the second-hand marketplace feature! Found some rare books at amazing prices. The condition details were accurate and shipping was prompt."</p>
-      </div>
-      <div class="bg-light p-6 rounded-lg shadow-sm">
-        <div class="flex items-center mb-4">
-          <img src="/img/testimonials/user2.jpeg" alt="User" class="w-12 h-12 rounded-full mr-4">
-          <div>
-            <h4 class="font-semibold">Priya Patel</h4>
-            <div class="flex">
-              <% for(let i = 0; i < 5; i++) { %>
-                <i class="fas fa-star <%= i < 4 ? 'text-yellow-400' : 'text-gray-300' %> text-sm"></i>
+
+          <div class="flex items-center justify-between">
+            <div>
+              <% if (book.discountPrice && book.discountPrice < book.price) { %>
+              <span class="text-primary font-bold"
+                >₹<%= book.discountPrice %></span
+              >
+              <span class="text-gray-400 text-sm line-through ml-1"
+                >₹<%= book.price %></span
+              >
+              <% } else { %>
+              <span class="text-primary font-bold">₹<%= book.price %></span>
               <% } %>
             </div>
+            <a
+              href="/cart/add/<%= book._id %>"
+              class="text-primary hover:text-primary-dark transition"
+            >
+              <i class="fas fa-shopping-cart"></i>
+            </a>
           </div>
         </div>
-        <p class="text-gray-600">"The video reviews helped me choose the perfect book for my book club. The recommendations are spot on and I've discovered many new authors."</p>
       </div>
-      <div class="bg-light p-6 rounded-lg shadow-sm">
-        <div class="flex items-center mb-4">
-          <img src="/img/testimonials/user3.jpg" alt="User" class="w-12 h-12 rounded-full mr-4">
-          <div>
-            <h4 class="font-semibold">Amit Kumar</h4>
-            <div class="flex">
-              <% for(let i = 0; i < 5; i++) { %>
-                <i class="fas fa-star <%= i < 5 ? 'text-yellow-400' : 'text-gray-300' %> text-sm"></i>
-              <% } %>
-            </div>
-          </div>
+      <% }) %> <% } else { %>
+      <div class="col-span-full text-center py-8">
+        <p class="text-text-light">
+          No featured books available at the moment. Check back soon!
+        </p>
+      </div>
+      <% } %>
+    </div>
+  </div>
+</section>
+
+<!-- Community Section -->
+<section class="py-16">
+  <div class="container mx-auto px-4">
+    <h2 class="text-3xl font-bold text-center text-secondary mb-4">
+      Join Our Reading Community
+    </h2>
+    <p class="text-center text-text-light max-w-3xl mx-auto mb-12">
+      Connect with fellow readers, share your thoughts, and discover your next
+      favorite book.
+    </p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <!-- Blog Highlights -->
+      <div class="rounded-lg bg-white shadow-md overflow-hidden">
+        <div class="bg-secondary/90 text-white py-4 px-6">
+          <h3 class="text-xl font-bold">Latest From The Blog</h3>
         </div>
-        <p class="text-gray-600">"As a seller, I find the platform very user-friendly. The analytics dashboard helps me track my sales and understand customer preferences."</p>
+        <div class="p-6">
+          <% if (latestBlogs && latestBlogs.length > 0) { %>
+          <div class="space-y-6">
+            <% latestBlogs.forEach(blog => { %>
+            <div class="flex items-start">
+              <div
+                class="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 mr-4"
+              >
+                <img
+                  src="<%= blog.coverImage || '/images/blog-default.jpg' %>"
+                  alt="<%= blog.title %>"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+              <div>
+                <h4
+                  class="font-semibold text-secondary hover:text-primary transition"
+                >
+                  <a href="/blog/<%= blog._id %>"><%= blog.title %></a>
+                </h4>
+                <p class="text-sm text-text-light mb-1">
+                  <span class="mr-2">By <%= blog.author.name %></span> •
+                  <span class="ml-2"
+                    ><%= new Date(blog.createdAt).toLocaleDateString('en-US', {
+                    day: 'numeric', month: 'short', year: 'numeric' }) %></span
+                  >
+                </p>
+                <p class="text-sm text-text-light line-clamp-1">
+                  <%= blog.content.substring(0, 120) %>...
+                </p>
+              </div>
+            </div>
+            <% }) %>
+          </div>
+          <div class="mt-6 text-center">
+            <a
+              href="/blog"
+              class="inline-block bg-secondary/10 text-secondary font-medium px-6 py-2 rounded-lg hover:bg-secondary/20 transition"
+            >
+              View All Posts
+            </a>
+          </div>
+          <% } else { %>
+          <div class="text-center py-8">
+            <p class="text-text-light mb-4">
+              No blog posts yet. Be the first to share your thoughts!
+            </p>
+            <a
+              href="/blog/new"
+              class="inline-block bg-secondary/10 text-secondary font-medium px-6 py-2 rounded-lg hover:bg-secondary/20 transition"
+            >
+              Write a Blog Post
+            </a>
+          </div>
+          <% } %>
+        </div>
+      </div>
+
+      <!-- Recommendation Lists -->
+      <div class="rounded-lg bg-white shadow-md overflow-hidden">
+        <div class="bg-primary/90 text-secondary py-4 px-6">
+          <h3 class="text-xl font-bold">Top Recommendation Lists</h3>
+        </div>
+        <div class="p-6">
+          <% if (topLists && topLists.length > 0) { %>
+          <div class="space-y-6">
+            <% topLists.forEach(list => { %>
+            <div class="flex items-start">
+              <div
+                class="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 mr-4"
+              >
+                <img
+                  src="<%= list.creator.avatar || '/images/avatar-default.jpg' %>"
+                  alt="<%= list.creator.name %>"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+              <div class="flex-1">
+                <h4
+                  class="font-semibold text-secondary hover:text-primary transition"
+                >
+                  <a href="/recommendations/<%= list._id %>"
+                    ><%= list.title %></a
+                  >
+                </h4>
+                <p class="text-sm text-text-light mb-1">
+                  By <%= list.creator.name %> • <%= list.books.length %> books
+                </p>
+                <p class="text-sm text-text-light line-clamp-2">
+                  <%= list.description %>
+                </p>
+                <div class="flex items-center mt-2 text-sm">
+                  <span class="flex items-center text-primary mr-3">
+                    <i class="fas fa-thumbs-up mr-1"></i>
+                    <span><%= list.upvotes %></span>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <% }) %>
+          </div>
+          <div class="mt-6 text-center">
+            <a
+              href="/recommendations"
+              class="inline-block bg-primary/10 text-primary font-medium px-6 py-2 rounded-lg hover:bg-primary/20 transition"
+            >
+              View All Lists
+            </a>
+          </div>
+          <% } else { %>
+          <div class="text-center py-8">
+            <p class="text-text-light mb-4">
+              No recommendation lists yet. Create your own curated book list!
+            </p>
+            <a
+              href="/recommendations/new"
+              class="inline-block bg-primary/10 text-primary font-medium px-6 py-2 rounded-lg hover:bg-primary/20 transition"
+            >
+              Create a List
+            </a>
+          </div>
+          <% } %>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Call to Action -->
-<section class="py-12 bg-primary">
+<!-- CTA Section -->
+<section
+  class="bg-gradient-to-r from-primary to-primary/80 text-secondary py-16"
+>
   <div class="container mx-auto px-4 text-center">
-    <h2 class="text-3xl font-bold text-dark mb-4">Ready to Start Reading?</h2>
-    <p class="text-lg text-dark mb-8">Join thousands of book lovers on Bookish today.</p>
-    <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-      <a href="/buyer/browse" class="bg-dark text-white px-6 py-3 rounded-md hover:bg-opacity-90 transition">Browse Books</a>
-      <a href="/auth/register" class="bg-white text-dark px-6 py-3 rounded-md border border-dark hover:bg-gray-100 transition">Sign Up Now</a>
+    <h2 class="text-3xl font-bold mb-4">Start Your Reading Journey Today</h2>
+    <p class="text-xl mb-8 max-w-2xl mx-auto">
+      Join thousands of book lovers on BOOKSHELF and discover your next great
+      read.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a
+        href="/auth/register"
+        class="bg-secondary text-white font-bold py-3 px-6 rounded-lg hover:bg-secondary/90 transition duration-300"
+      >
+        Create an Account
+      </a>
+      <a
+        href="/books"
+        class="bg-white text-secondary font-bold py-3 px-6 rounded-lg hover:bg-gray-100 transition duration-300"
+      >
+        Browse Books
+      </a>
     </div>
   </div>
 </section>
-
-<!-- JavaScript for Auto-Advancing Carousel -->
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const carousel = document.getElementById('carousel-inner');
-    const cards = document.querySelectorAll('.book-card');
-    const prevBtn = document.getElementById('prev-btn');
-    const nextBtn = document.getElementById('next-btn');
-    
-    let currentIndex = 0;
-    const cardWidth = 100 / cards.length;
-    
-    // Set initial position
-    updateCarousel();
-    
-    // Auto advance every 8 seconds
-    const interval = setInterval(() => {
-      currentIndex = (currentIndex + 1) % cards.length;
-      updateCarousel();
-    }, 8000);
-    
-    // Previous button
-    prevBtn.addEventListener('click', () => {
-      currentIndex = (currentIndex - 1 + cards.length) % cards.length;
-      updateCarousel();
-      resetInterval();
-    });
-    
-    // Next button
-    nextBtn.addEventListener('click', () => {
-      currentIndex = (currentIndex + 1) % cards.length;
-      updateCarousel();
-      resetInterval();
-    });
-    
-    function updateCarousel() {
-      // Remove active class from all cards
-      cards.forEach(card => card.classList.remove('active'));
-      
-      // Add active class to current card
-      cards[currentIndex].classList.add('active');
-      
-      // Calculate translation
-      const translateX = -currentIndex * (100 / (cards.length / 4));
-      carousel.style.transform = `translateX(${translateX}%)`;
-    }
-    
-    function resetInterval() {
-      clearInterval(interval);
-      setInterval(() => {
-        currentIndex = (currentIndex + 1) % cards.length;
-        updateCarousel();
-      }, 8000);
-    }
-  });
-</script>
 
 <%- include('partials/footer') %>
-

@@ -1,0 +1,338 @@
+<%- include('../partials/header') %>
+
+<div class="container mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-3xl font-bold">Order Management</h1>
+    <div class="text-sm text-gray-600">Total: <%= orders.length %> orders</div>
+  </div>
+  
+  <!-- Dashboard Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+    <div class="bg-white rounded-lg shadow p-4 border-l-4 border-yellow-400">
+      <div class="flex items-center">
+        <div class="p-3 rounded-full bg-yellow-100 mr-4">
+          <i class="fas fa-clock text-yellow-400"></i>
+        </div>
+        <div>
+          <p class="text-sm text-gray-600">Processing</p>
+          <p class="text-xl font-bold"><%= orders.filter(o => o.orderStatus === 'processing').length %></p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow p-4 border-l-4 border-blue-400">
+      <div class="flex items-center">
+        <div class="p-3 rounded-full bg-blue-100 mr-4">
+          <i class="fas fa-shipping-fast text-blue-400"></i>
+        </div>
+        <div>
+          <p class="text-sm text-gray-600">Shipped</p>
+          <p class="text-xl font-bold"><%= orders.filter(o => o.orderStatus === 'shipped').length %></p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow p-4 border-l-4 border-green-400">
+      <div class="flex items-center">
+        <div class="p-3 rounded-full bg-green-100 mr-4">
+          <i class="fas fa-check-circle text-green-400"></i>
+        </div>
+        <div>
+          <p class="text-sm text-gray-600">Delivered</p>
+          <p class="text-xl font-bold"><%= orders.filter(o => o.orderStatus === 'delivered').length %></p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow p-4 border-l-4 border-red-400">
+      <div class="flex items-center">
+        <div class="p-3 rounded-full bg-red-100 mr-4">
+          <i class="fas fa-times-circle text-red-400"></i>
+        </div>
+        <div>
+          <p class="text-sm text-gray-600">Cancelled</p>
+          <p class="text-xl font-bold"><%= orders.filter(o => o.orderStatus === 'cancelled').length %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Filters -->
+  <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+    <form action="/admin/orders" method="GET" class="flex flex-wrap items-end gap-4">
+      <div class="w-full md:w-auto flex-1">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Filter by Status</label>
+        <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary">
+          <option value="all" <%= activeFilters.status === 'all' ? 'selected' : '' %>>All Statuses</option>
+          <option value="processing" <%= activeFilters.status === 'processing' ? 'selected' : '' %>>Processing</option>
+          <option value="shipped" <%= activeFilters.status === 'shipped' ? 'selected' : '' %>>Shipped</option>
+          <option value="delivered" <%= activeFilters.status === 'delivered' ? 'selected' : '' %>>Delivered</option>
+          <option value="cancelled" <%= activeFilters.status === 'cancelled' ? 'selected' : '' %>>Cancelled</option>
+        </select>
+      </div>
+      
+      <div class="w-full md:w-auto flex-1">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Search Orders</label>
+        <input 
+          type="text" 
+          name="search" 
+          placeholder="Order ID or customer name"
+          value="<%= activeFilters.search %>"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary"
+        >
+      </div>
+      
+      <div class="w-auto">
+        <button type="submit" class="px-4 py-2 bg-primary text-dark font-medium rounded-md hover:bg-opacity-90 transition-colors">
+          Apply Filters
+        </button>
+        <a href="/admin/orders" class="ml-2 px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-md hover:bg-gray-200 transition-colors">
+          Reset
+        </a>
+      </div>
+    </form>
+  </div>
+
+  <!-- Orders List -->
+  <div class="space-y-6">
+    <% if (orders.length === 0) { %>
+      <div class="bg-white rounded-lg shadow-md p-8 text-center">
+        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-box-open text-gray-400 text-2xl"></i>
+        </div>
+        <h3 class="text-xl font-medium mb-2">No Orders Found</h3>
+        <p class="text-gray-500">No orders match your current filters.</p>
+      </div>
+    <% } else { %>
+      <% orders.forEach(order => { %>
+        <div class="bg-white rounded-lg shadow-md overflow-hidden" data-order-id="<%= order._id %>">
+          <!-- Order Header -->
+          <div class="border-b p-4 md:p-6">
+            <div class="flex flex-wrap justify-between items-start gap-4">
+              <div>
+                <div class="flex items-center">
+                  <h2 class="text-lg md:text-xl font-semibold">Order #<%= order.orderId %></h2>
+                  <span class="ml-3 <%= 
+                    order.orderStatus === 'processing' ? 'bg-yellow-100 text-yellow-800' : 
+                    order.orderStatus === 'shipped' ? 'bg-blue-100 text-blue-800' : 
+                    order.orderStatus === 'delivered' ? 'bg-green-100 text-green-800' : 
+                    'bg-red-100 text-red-800' 
+                  %> text-xs px-2 py-1 rounded-full">
+                    <%= order.orderStatus.charAt(0).toUpperCase() + order.orderStatus.slice(1) %>
+                  </span>
+                </div>
+                <p class="text-sm text-gray-600 mt-1">Placed on <%= new Date(order.orderDate).toLocaleDateString() %> at <%= new Date(order.orderDate).toLocaleTimeString() %></p>
+              </div>
+              
+              <button class="toggle-details text-primary hover:text-opacity-80 font-medium text-sm flex items-center" data-target="#details-<%= order._id %>">
+                <span>View Details</span>
+                <i class="fas fa-chevron-down ml-1"></i>
+              </button>
+            </div>
+            
+            <div class="flex flex-wrap gap-x-6 gap-y-2 mt-3">
+              <div class="flex items-center text-sm">
+                <i class="fas fa-user text-gray-400 mr-2"></i>
+                <span><%= order.buyer ? order.buyer.name : 'Unknown' %></span>
+              </div>
+              <div class="flex items-center text-sm">
+                <i class="fas fa-envelope text-gray-400 mr-2"></i>
+                <span><%= order.buyer ? order.buyer.email : 'Unknown' %></span>
+              </div>
+              <div class="flex items-center text-sm">
+                <i class="fas fa-money-bill-wave text-gray-400 mr-2"></i>
+                <span>₹<%= order.totalAmount.toFixed(2) %></span>
+              </div>
+              <div class="flex items-center text-sm">
+                <i class="fas fa-box text-gray-400 mr-2"></i>
+                <span><%= order.items.length %> items</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Order Details (Hidden by Default) -->
+          <div id="details-<%= order._id %>" class="hidden p-4 md:p-6 bg-gray-50">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <!-- Order Items -->
+              <div class="md:col-span-2">
+                <h3 class="font-medium mb-4">Order Items</h3>
+                
+                <div class="space-y-4">
+                  <% order.items.forEach(item => { %>
+                    <div class="flex items-start p-3 bg-white rounded-lg border border-gray-100">
+                      <% if (item.book && item.book.coverImage) { %>
+                        <img src="<%= item.book.coverImage %>" alt="<%= item.book.title %>" class="w-12 h-16 object-cover rounded">
+                      <% } else { %>
+                        <div class="w-12 h-16 bg-gray-200 rounded flex items-center justify-center">
+                          <i class="fas fa-book text-gray-400"></i>
+                        </div>
+                      <% } %>
+                      
+                      <div class="ml-4 flex-1">
+                        <h4 class="font-medium"><%= item.book ? item.book.title : item.title || 'Unknown Title' %></h4>
+                        <p class="text-sm text-gray-600"><%= item.book ? item.book.author : item.author || 'Unknown Author' %></p>
+                        <div class="flex justify-between mt-1">
+                          <p class="text-sm">Qty: <%= item.quantity %></p>
+                          <p class="text-sm font-medium">₹<%= item.price.toFixed(2) %></p>
+                        </div>
+                      </div>
+                    </div>
+                  <% }) %>
+                </div>
+              </div>
+              
+              <!-- Shipping and Payment -->
+              <div>
+                <!-- Shipping Information -->
+                <div class="mb-6">
+                  <h3 class="font-medium mb-2">Shipping Address</h3>
+                  <div class="bg-white rounded-lg p-3 border border-gray-100">
+                    <% if (order.shippingAddress) { %>
+                      <p><%= order.shippingAddress.name %></p>
+                      <p><%= order.shippingAddress.address %></p>
+                      <p><%= order.shippingAddress.city %>, <%= order.shippingAddress.state %> <%= order.shippingAddress.pincode %></p>
+                      <p><%= order.shippingAddress.phone %></p>
+                    <% } else { %>
+                      <p class="text-gray-500">Shipping information not available.</p>
+                    <% } %>
+                  </div>
+                </div>
+                
+                <!-- Payment Information -->
+                <div>
+                  <h3 class="font-medium mb-2">Payment Information</h3>
+                  <div class="bg-white rounded-lg p-3 border border-gray-100">
+                    <p><span class="text-gray-600">Method:</span> <%= order.paymentMethod %></p>
+                    <p><span class="text-gray-600">Status:</span> <%= order.paymentStatus || 'Completed' %></p>
+                    <p><span class="text-gray-600">Total:</span> ₹<%= order.totalAmount.toFixed(2) %></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Order Update Form -->
+            <div class="mt-6 pt-6 border-t">
+              <h3 class="font-medium mb-4">Update Order Status</h3>
+              
+              <form action="/admin/orders/update/<%= order._id %>" method="POST">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                    <select name="orderStatus" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary">
+                      <option value="processing" <%= order.orderStatus === 'processing' ? 'selected' : '' %>>Processing</option>
+                      <option value="shipped" <%= order.orderStatus === 'shipped' ? 'selected' : '' %>>Shipped</option>
+                      <option value="delivered" <%= order.orderStatus === 'delivered' ? 'selected' : '' %>>Delivered</option>
+                      <option value="cancelled" <%= order.orderStatus === 'cancelled' ? 'selected' : '' %>>Cancelled</option>
+                    </select>
+                  </div>
+                  
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Expected Delivery Date</label>
+                    <input 
+                      type="date" 
+                      name="expectedDelivery" 
+                      value="<%= order.expectedDelivery ? new Date(order.expectedDelivery).toISOString().split('T')[0] : '' %>"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary"
+                    >
+                  </div>
+                  
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Tracking Number</label>
+                    <input 
+                      type="text" 
+                      name="trackingNumber" 
+                      value="<%= order.trackingInfo && order.trackingInfo.trackingNumber || '' %>"
+                      placeholder="Enter tracking number"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary"
+                    >
+                  </div>
+                  
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Carrier</label>
+                    <input 
+                      type="text" 
+                      name="carrier" 
+                      value="<%= order.trackingInfo && order.trackingInfo.carrier || '' %>"
+                      placeholder="e.g. FedEx, UPS, etc."
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary"
+                    >
+                  </div>
+                  
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Tracking URL</label>
+                    <input 
+                      type="text" 
+                      name="trackingUrl" 
+                      value="<%= order.trackingInfo && order.trackingInfo.trackingUrl || '' %>"
+                      placeholder="Enter tracking URL"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary"
+                    >
+                  </div>
+                  
+                  <div class="md:col-span-3">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Admin Notes</label>
+                    <textarea 
+                      name="adminNotes" 
+                      rows="2"
+                      placeholder="Add private notes about this order"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary"
+                    ><%= order.adminNotes || '' %></textarea>
+                  </div>
+                </div>
+                
+                <div class="mt-4 flex justify-end">
+                  <button type="submit" class="px-4 py-2 bg-primary text-dark font-medium rounded-md hover:bg-opacity-90 transition-colors">
+                    Update Order
+                  </button>
+                </div>
+              </form>
+            </div>
+            
+            <!-- Order History -->
+            <% if (order.statusHistory && order.statusHistory.length > 0) { %>
+              <div class="mt-6 pt-6 border-t">
+                <h3 class="font-medium mb-4">Order History</h3>
+                <div class="border-l-2 border-gray-200 pl-4">
+                  <% order.statusHistory.forEach(entry => { %>
+                    <div class="mb-4 relative">
+                      <div class="w-3 h-3 rounded-full bg-primary absolute -left-[25px] top-1.5"></div>
+                      <p class="text-sm text-gray-600"><%= new Date(entry.date).toLocaleString() %></p>
+                      <p class="font-medium"><%= entry.status.charAt(0).toUpperCase() + entry.status.slice(1) %></p>
+                      <% if (entry.note) { %>
+                        <p class="text-sm text-gray-600"><%= entry.note %></p>
+                      <% } %>
+                    </div>
+                  <% }) %>
+                </div>
+              </div>
+            <% } %>
+          </div>
+        </div>
+      <% }) %>
+    <% } %>
+  </div>
+</div>
+
+<script>
+  // Toggle order details visibility
+  document.querySelectorAll('.toggle-details').forEach(button => {
+    button.addEventListener('click', () => {
+      const targetId = button.getAttribute('data-target');
+      const target = document.querySelector(targetId);
+      
+      if (target.classList.contains('hidden')) {
+        target.classList.remove('hidden');
+        button.querySelector('i').classList.remove('fa-chevron-down');
+        button.querySelector('i').classList.add('fa-chevron-up');
+        button.querySelector('span').textContent = 'Hide Details';
+      } else {
+        target.classList.add('hidden');
+        button.querySelector('i').classList.remove('fa-chevron-up');
+        button.querySelector('i').classList.add('fa-chevron-down');
+        button.querySelector('span').textContent = 'View Details';
+      }
+    });
+  });
+</script>
+
+<%- include('../partials/footer') %>

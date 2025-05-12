@@ -6,14 +6,14 @@ const express = require("express")
 const router = express.Router()
 const passport = require("passport")
 const User = require("../models/User")
-const { ensureNotAuthenticated } = require("../middleware/auth")
+const { ensureAuthenticated, forwardAuthenticated } = require("../middleware/auth")
 
 /**
  * @route   GET /auth/register
  * @desc    Render registration page
  * @access  Public
  */
-router.get("/register", ensureNotAuthenticated, (req, res) => {
+router.get("/register", forwardAuthenticated, (req, res) => {
   res.render("auth/register", {
     title: "Register - Bookish",
     user: req.user,
@@ -25,7 +25,7 @@ router.get("/register", ensureNotAuthenticated, (req, res) => {
  * @desc    Register a new user
  * @access  Public
  */
-router.post("/register", ensureNotAuthenticated, async (req, res) => {
+router.post("/register", forwardAuthenticated, async (req, res) => {
   const { name, email, password, password2, role } = req.body
   const errors = []
 
@@ -96,22 +96,22 @@ router.post("/register", ensureNotAuthenticated, async (req, res) => {
 
 /**
  * @route   GET /auth/login
- * @desc    Render login page
+ * @desc    Login page
  * @access  Public
  */
-router.get("/login", ensureNotAuthenticated, (req, res) => {
+router.get("/login", forwardAuthenticated, (req, res) => {
   res.render("auth/login", {
     title: "Login - Bookish",
-    user: req.user,
-  })
-})
+    user: req.user
+  });
+});
 
 /**
  * @route   POST /auth/login
  * @desc    Login user
  * @access  Public
  */
-router.post("/login", ensureNotAuthenticated, (req, res, next) => {
+router.post("/login", forwardAuthenticated, (req, res, next) => {
   passport.authenticate("local", {
     successRedirect: "/",
     failureRedirect: "/auth/login",

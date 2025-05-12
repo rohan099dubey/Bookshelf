@@ -1,0 +1,98 @@
+<%- include('../partials/header') %>
+
+<div class="container mx-auto px-4 py-8">
+  <div class="max-w-2xl mx-auto">
+    <h1 class="text-3xl font-bold mb-6">Subscribe to <%= plan.name %></h1>
+    
+    <div class="bg-white rounded-lg shadow-md overflow-hidden mb-8">
+      <div class="p-6 bg-gray-50 border-b">
+        <h2 class="text-xl font-semibold">Plan Details</h2>
+      </div>
+      <div class="p-6">
+        <div class="flex justify-between mb-4">
+          <span class="text-gray-600">Plan:</span>
+          <span class="font-medium"><%= plan.name %></span>
+        </div>
+        <div class="flex justify-between mb-4">
+          <span class="text-gray-600">Price:</span>
+          <span class="font-medium">₹<%= plan.price %>/<%= plan.interval %></span>
+        </div>
+        <div class="border-t pt-4 mt-4">
+          <h3 class="font-medium mb-2">Features:</h3>
+          <ul class="space-y-2">
+            <% plan.features.forEach(feature => { %>
+              <li class="flex items-start">
+                <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                <span><%= feature %></span>
+              </li>
+            <% }) %>
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+      <div class="p-6 bg-gray-50 border-b">
+        <h2 class="text-xl font-semibold">Payment Details</h2>
+      </div>
+      <div class="p-6">
+        <div id="payment-element" class="mb-6">
+          <!-- Stripe Elements will be inserted here -->
+        </div>
+        
+        <div id="payment-message" class="hidden bg-red-100 text-red-700 p-4 rounded mb-4"></div>
+        
+        <button id="submit-button" class="w-full bg-primary text-dark px-6 py-3 rounded-md hover:bg-opacity-90 transition">
+          Subscribe for ₹<%= plan.price %>/<%= plan.interval %>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Stripe Integration -->
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const stripe = Stripe('<%= publishableKey %>');
+    const submitButton = document.getElementById('submit-button');
+    
+    submitButton.addEventListener('click', async (e) => {
+      e.preventDefault();
+      
+      submitButton.disabled = true;
+      submitButton.textContent = 'Processing...';
+      
+      // Create the subscription checkout session
+      try {
+        const response = await fetch('/subscription/create-subscription-session', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            planId: '<%= planId %>'
+          }),
+        });
+        
+        const session = await response.json();
+        
+        if (session.success) {
+          // Redirect to Checkout
+          stripe.redirectToCheckout({
+            sessionId: session.sessionId
+          });
+        } else {
+          throw new Error(session.message || 'Something went wrong');
+        }
+      } catch (error) {
+        document.getElementById('payment-message').classList.remove('hidden');
+        document.getElementById('payment-message').textContent = error.message;
+        submitButton.disabled = false;
+        submitButton.textContent = 'Subscribe for ₹<%= plan.price %>/<%= plan.interval %>';
+      }
+    });
+  });
+</script>
+
+<%- include('../partials/footer') %>

@@ -6,6 +6,7 @@ const express = require("express")
 const router = express.Router()
 const Book = require("../models/Book")
 const Order = require("../models/Order")
+const Complaint = require('../models/Complaint');
 const { ensureAuthenticated, ensureSeller } = require("../middleware/auth")
 
 /**
@@ -16,63 +17,63 @@ const { ensureAuthenticated, ensureSeller } = require("../middleware/auth")
 router.get("/dashboard", ensureAuthenticated, ensureSeller, async (req, res) => {
   try {
     // Get seller's books
-    const books = await Book.find({ seller: req.user._id })
+    const books = await Book.find({ seller: req.user._id });
 
     // Get orders containing seller's books
     const orders = await Order.find({
-      "items.book": { $in: books.map((book) => book._id) },
-      orderStatus: { $in: ["processing", "shipped", "delivered"] },
-    }).sort({ orderDate: -1 })
+      'items.seller': req.user._id,
+      orderStatus: { $in: ["processing", "shipped", "delivered"] }
+    })
+    .populate('buyer', 'name email')
+    .populate('items.book', 'title author coverImage')
+    .sort({ orderDate: -1 });
 
     // Calculate total sales
-    let totalSales = 0
-    let monthlySales = 0
-    const totalOrders = orders.length
-    let pendingOrders = 0
+    let totalSales = 0;
+    let monthlySales = 0;
+    const totalOrders = orders.length;
+    let pendingOrders = 0;
 
     // Current month
-    const now = new Date()
-    const currentMonth = now.getMonth()
-    const currentYear = now.getFullYear()
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+
+    // Initialize sales data for each month
+    const salesData = Array(12).fill().map((_, i) => ({
+      month: new Date(0, i).toLocaleString('default', { month: 'short' }),
+      sales: 0
+    }));
 
     orders.forEach((order) => {
       // Calculate total sales
       order.items.forEach((item) => {
-        if (books.some((book) => book._id.toString() === item.book.toString())) {
-          totalSales += item.price * item.quantity
+        if (item.seller && item.seller.toString() === req.user._id.toString()) {
+          const itemTotal = item.price * item.quantity;
+          totalSales += itemTotal;
 
           // Calculate monthly sales
-          const orderDate = new Date(order.orderDate)
+          const orderDate = new Date(order.orderDate);
           if (orderDate.getMonth() === currentMonth && orderDate.getFullYear() === currentYear) {
-            monthlySales += item.price * item.quantity
+            monthlySales += itemTotal;
           }
+
+          // Add to monthly sales data
+          salesData[orderDate.getMonth()].sales += itemTotal;
         }
-      })
+      });
 
       // Count pending orders
       if (order.orderStatus === "processing") {
-        pendingOrders++
+        pendingOrders++;
       }
-    })
-
-    // Mock data for charts
-    const salesData = [
-      { month: "Jan", sales: 1200 },
-      { month: "Feb", sales: 1900 },
-      { month: "Mar", sales: 1500 },
-      { month: "Apr", sales: 2100 },
-      { month: "May", sales: 1800 },
-      { month: "Jun", sales: 2400 },
-      { month: "Jul", sales: 2200 },
-      { month: "Aug", sales: 2600 },
-      { month: "Sep", sales: 2900 },
-      { month: "Oct", sales: 3100 },
-      { month: "Nov", sales: 3300 },
-      { month: "Dec", sales: 3500 },
-    ]
+    });
 
     // Get top selling books
-    const topBooks = books.sort((a, b) => b.reviewCount - a.reviewCount).slice(0, 5)
+    const topBooks = books.sort((a, b) => b.reviewCount - a.reviewCount).slice(0, 5);
+
+    // Get recent orders
+    const recentOrders = orders.slice(0, 5);
 
     res.render("seller/dashboard", {
       title: "Seller Dashboard - Bookish",
@@ -82,15 +83,15 @@ router.get("/dashboard", ensureAuthenticated, ensureSeller, async (req, res) => 
       pendingOrders,
       salesData,
       topBooks,
-      recentOrders: orders.slice(0, 5),
+      recentOrders,
       user: req.user,
-    })
+    });
   } catch (err) {
-    console.error(err)
-    req.flash("error_msg", "Error loading dashboard")
-    res.redirect("/")
+    console.error(err);
+    req.flash("error_msg", "Error loading dashboard");
+    res.redirect("/");
   }
-})
+});
 
 /**
  * @route   GET /seller/upload
@@ -232,38 +233,58 @@ router.get("/edit/:id", ensureAuthenticated, ensureSeller, async (req, res) => {
  */
 router.post("/edit/:id", ensureAuthenticated, ensureSeller, async (req, res) => {
   try {
-    const { title, author, description, price, discountPrice, stock, isAvailable } = req.body
+    const {
+      title,
+      author,
+      description,
+      isbn,
+      price,
+      discountPrice,
+      publisher,
+      publishedDate,
+      pageCount,
+      language,
+      format,
+      stock,
+      isAvailable
+    } = req.body;
 
     // Find book
     const book = await Book.findOne({
       _id: req.params.id,
       seller: req.user._id,
-    })
+    });
 
     if (!book) {
-      req.flash("error_msg", "Book not found or you are not authorized")
+      req.flash("error_msg", "Book not found or you are not authorized");
       return res.redirect("/seller/inventory");
     }
 
-    // Update book
-    book.title = title
-    book.author = author
-    book.description = description
-    book.price = price
-    book.discountPrice = discountPrice || price
-    book.stock = stock
-    book.isAvailable = isAvailable === "on"
+    // Update book fields
+    book.title = title;
+    book.author = author;
+    book.description = description;
+    book.isbn = isbn;
+    book.price = price;
+    book.discountPrice = discountPrice || price;
+    book.publisher = publisher;
+    book.publishedDate = publishedDate;
+    book.pageCount = pageCount;
+    book.language = language;
+    book.format = format;
+    book.stock = stock;
+    book.isAvailable = isAvailable === "on";
 
-    await book.save()
+    await book.save();
 
-    req.flash("success_msg", "Book updated successfully")
-    res.redirect("/seller/inventory")
+    req.flash("success_msg", "Book updated successfully");
+    res.redirect("/seller/inventory");
   } catch (err) {
-    console.error(err)
-    req.flash("error_msg", "Error updating book")
-    res.redirect("/seller/inventory")
+    console.error(err);
+    req.flash("error_msg", "Error updating book");
+    res.redirect("/seller/inventory");
   }
-})
+});
 
 /**
  * @route   POST /seller/delete/:id
@@ -295,33 +316,171 @@ router.post("/delete/:id", ensureAuthenticated, ensureSeller, async (req, res) =
 
 /**
  * @route   GET /seller/orders
- * @desc    View orders for seller's books
+ * @desc    Get all orders for the seller
  * @access  Private (Seller)
  */
 router.get("/orders", ensureAuthenticated, ensureSeller, async (req, res) => {
   try {
-    // Get seller's books
-    const books = await Book.find({ seller: req.user._id })
+    const page = parseInt(req.query.page) || 1;
+    const limit = 10;
+    const skip = (page - 1) * limit;
 
-    // Get orders containing seller's books
-    const orders = await Order.find({
-      "items.book": { $in: books.map((book) => book._id) },
-    })
-      .populate("user", "name email")
+    // Build query
+    const query = {
+      'items.seller': req.user._id
+    };
+
+    // Add status filter if provided
+    if (req.query.status) {
+      query.orderStatus = req.query.status;
+    }
+
+    // Get total count for pagination
+    const totalOrders = await Order.countDocuments(query);
+
+    // Get orders with pagination
+    const orders = await Order.find(query)
+      .populate('buyer', 'name email')
+      .populate('items.book', 'title author coverImage')
       .sort({ orderDate: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    // Calculate total sales and monthly sales
+    let totalSales = 0;
+    let monthlySales = 0;
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+
+    orders.forEach(order => {
+      order.items.forEach(item => {
+        if (item.seller && item.seller.toString() === req.user._id.toString()) {
+          const itemTotal = item.price * item.quantity;
+          totalSales += itemTotal;
+
+          const orderDate = new Date(order.orderDate);
+          if (orderDate.getMonth() === currentMonth && orderDate.getFullYear() === currentYear) {
+            monthlySales += itemTotal;
+          }
+        }
+      });
+    });
+
+    // Calculate pending orders
+    const pendingOrders = orders.filter(order => order.orderStatus === 'processing').length;
 
     res.render("seller/orders", {
-      title: "Orders - Bookish",
+      title: "Seller Orders - Bookish",
       orders,
-      books,
+      totalSales,
+      monthlySales,
+      totalOrders,
+      pendingOrders,
+      currentPage: page,
+      totalPages: Math.ceil(totalOrders / limit),
       user: req.user,
-    })
+      status: req.query.status || 'all'
+    });
   } catch (err) {
-    console.error(err)
-    req.flash("error_msg", "Error fetching orders")
-    res.redirect("/seller/dashboard")
+    console.error(err);
+    req.flash("error_msg", "Error loading orders");
+    res.redirect("/seller/dashboard");
   }
-})
+});
+
+/**
+ * @route   GET /seller/orders/:id
+ * @desc    Show order details for a specific order
+ * @access  Private (Seller)
+ */
+router.get("/orders/:id", ensureAuthenticated, ensureSeller, async (req, res) => {
+  try {
+    const order = await Order.findOne({
+      _id: req.params.id,
+      'items.seller': req.user._id
+    })
+    .populate('buyer', 'name email')
+    .populate('items.book', 'title author coverImage');
+    
+    if (!order) {
+      req.flash("error_msg", "Order not found");
+      return res.redirect("/seller/orders");
+    }
+    
+    // Filter items for this seller only
+    const sellerItems = order.items.filter(
+      item => item.seller.toString() === req.user._id.toString()
+    );
+    
+    // Calculate total for this seller's items
+    const sellerTotal = sellerItems.reduce(
+      (total, item) => total + (item.price * item.quantity), 0
+    );
+    
+    res.render("seller/order-details", {
+      title: "Order Details - Bookish",
+      user: req.user,
+      order: order,
+      sellerItems: sellerItems,
+      sellerTotal: sellerTotal
+    });
+  } catch (err) {
+    console.error(err);
+    req.flash("error_msg", "Error loading order details");
+    res.redirect("/seller/orders");
+  }
+});
+
+/**
+ * @route   GET /seller/register-complaint
+ * @desc    Display complaint registration form
+ * @access  Private (Seller)
+ */
+router.get("/register-complaint", ensureAuthenticated, ensureSeller, async (req, res) => {
+  try {
+    // Get user's previous complaints
+    const complaints = await Complaint.find({ user: req.user._id }).sort({ createdAt: -1 });
+    
+    res.render("seller/register-complaint", {
+      title: "Register Complaint - Bookish",
+      user: req.user,
+      complaints: complaints
+    });
+  } catch (err) {
+    console.error(err);
+    req.flash("error_msg", "Error loading complaints page");
+    res.redirect("/seller/dashboard");
+  }
+});
+
+/**
+ * @route   POST /seller/register-complaint
+ * @desc    Submit a new complaint
+ * @access  Private (Seller)
+ */
+router.post("/register-complaint", ensureAuthenticated, ensureSeller, async (req, res) => {
+  try {
+    const { subject, description } = req.body;
+    
+    // Create new complaint
+    const newComplaint = new Complaint({
+      subject,
+      description,
+      user: req.user._id,
+      userRole: 'seller'
+    });
+    
+    await newComplaint.save();
+    
+    req.flash("success_msg", "Complaint submitted successfully");
+    res.redirect("/seller/register-complaint");
+  } catch (err) {
+    console.error(err);
+    req.flash("error_msg", "Error submitting complaint");
+    res.redirect("/seller/register-complaint");
+  }
+});
 
 module.exports = router
 

@@ -1,10 +1,9 @@
 /**
- * User model with role-based access control
- * Supports Buyer, Seller, and Admin roles
+ * User model with enhanced profile fields
  */
 
-const mongoose = require("mongoose")
-const bcrypt = require("bcryptjs")
+const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
  
 const UserSchema = new mongoose.Schema({
   name: {
@@ -30,20 +29,23 @@ const UserSchema = new mongoose.Schema({
     enum: ["buyer", "seller", "admin"],
     default: "buyer",
   },
-  profileImage: {
+  avatar: {
     type: String,
-    default: "default-profile.jpg",
+    default: "/img/users/default-avatar.jpg",
+  },
+  phone: {
+    type: String,
+    match: [/^\d{10}$/, "Please enter a valid 10-digit phone number"],
   },
   address: {
     street: String,
     city: String,
     state: String,
     zipCode: String,
-    country: String,
-  },
-  phone: {
-    type: String,
-    match: [/^\d{10}$/, "Please enter a valid 10-digit phone number"],
+    country: { 
+      type: String,
+      default: "India" 
+    },
   },
   isVerified: {
     type: Boolean,
@@ -55,22 +57,30 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-})
+});
 
 // Encrypt password using bcrypt
 UserSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
-    next()
+    next();
   }
 
-  const salt = await bcrypt.genSalt(10)
-  this.password = await bcrypt.hash(this.password, salt)
-})
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+});
 
 // Match user entered password to hashed password in database
 UserSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
+};
+
+// Fix: Export the model correctly - check if it exists first
+let User;
+try {
+  User = mongoose.model("User");
+} catch (error) {
+  User = mongoose.model("User", UserSchema);
 }
 
-module.exports = mongoose.model("User", UserSchema)
+module.exports = User;
 

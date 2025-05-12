@@ -1,0 +1,221 @@
+<%- include('../partials/header') %>
+
+<div class="container mx-auto px-4 py-8">
+  <h1 class="text-3xl font-bold mb-8">All Orders</h1>
+
+  <!-- Filters -->
+  <div class="bg-white rounded-lg shadow-md p-4 mb-6">
+    <form id="filterForm" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Status</label>
+        <select name="status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+          <option value="">All Statuses</option>
+          <option value="ordered">Ordered</option>
+          <option value="processing">Processing</option>
+          <option value="shipped">Shipped</option>
+          <option value="delivered">Delivered</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Date Range</label>
+        <input type="date" name="startDate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700">&nbsp;</label>
+        <input type="date" name="endDate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700">&nbsp;</label>
+        <button type="submit" class="mt-1 w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+          Apply Filters
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <% if (orders && orders.length > 0) { %>
+    <div class="grid gap-6">
+      <% orders.forEach(order => { %>
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <div class="flex justify-between items-start mb-4">
+            <div>
+              <h2 class="text-xl font-semibold">Order #<%= order.orderId %></h2>
+              <p class="text-gray-600">Placed on: <%= new Date(order.orderDate).toLocaleDateString() %></p>
+            </div>
+            <div class="flex items-center space-x-4">
+              <span class="px-3 py-1 rounded-full text-sm font-medium
+                <%= order.orderStatus === 'delivered' ? 'bg-green-100 text-green-800' : 
+                    order.orderStatus === 'shipped' ? 'bg-blue-100 text-blue-800' :
+                    order.orderStatus === 'processing' ? 'bg-yellow-100 text-yellow-800' :
+                    'bg-gray-100 text-gray-800' %>">
+                <%= order.orderStatus.charAt(0).toUpperCase() + order.orderStatus.slice(1) %>
+              </span>
+              <button 
+                onclick="updateOrderStatus('<%= order._id %>')"
+                class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                Update Status
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Buyer Information -->
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <h3 class="font-medium mb-2">Buyer Information</h3>
+              <p class="text-gray-600"><%= order.buyer.name %></p>
+              <p class="text-gray-600"><%= order.buyer.email %></p>
+            </div>
+
+            <!-- Seller Information -->
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <h3 class="font-medium mb-2">Seller Information</h3>
+              <p class="text-gray-600"><%= order.items[0].seller.name %></p>
+              <p class="text-gray-600"><%= order.items[0].seller.email %></p>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <h3 class="font-medium mb-2">Order Summary</h3>
+              <p class="text-gray-600">Total Amount: $<%= order.totalAmount %></p>
+              <p class="text-gray-600">Payment Method: <%= order.paymentMethod %></p>
+              <p class="text-gray-600">Payment Status: <%= order.paymentStatus %></p>
+            </div>
+          </div>
+
+          <!-- Order Items -->
+          <div class="mt-6">
+            <h3 class="font-medium mb-4">Order Items</h3>
+            <div class="space-y-4">
+              <% order.items.forEach(item => { %>
+                <div class="flex items-center space-x-4 border-b pb-4">
+                  <img src="<%= item.coverImage %>" alt="<%= item.title %>" class="w-20 h-20 object-cover rounded">
+                  <div class="flex-1">
+                    <h4 class="font-medium"><%= item.title %></h4>
+                    <p class="text-gray-600">By <%= item.author %></p>
+                    <p class="text-gray-600">Quantity: <%= item.quantity %></p>
+                    <p class="text-gray-600">Price: $<%= item.price %></p>
+                  </div>
+                </div>
+              <% }) %>
+            </div>
+          </div>
+
+          <!-- Shipping Information -->
+          <div class="mt-6 pt-6 border-t">
+            <h3 class="font-medium mb-4">Shipping Information</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <p class="text-gray-600"><%= order.shippingAddress.street %></p>
+                <p class="text-gray-600">
+                  <%= order.shippingAddress.city %>, <%= order.shippingAddress.state %> <%= order.shippingAddress.zipCode %>
+                </p>
+                <p class="text-gray-600"><%= order.shippingAddress.country %></p>
+              </div>
+              <div>
+                <% if (order.trackingNumber) { %>
+                  <p class="text-gray-600">Tracking #: <%= order.trackingNumber %></p>
+                <% } %>
+                <% if (order.deliveryDate) { %>
+                  <p class="text-gray-600">Expected Delivery: <%= new Date(order.deliveryDate).toLocaleDateString() %></p>
+                <% } %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  <% } else { %>
+    <div class="text-center py-12">
+      <p class="text-gray-600 text-lg">No orders found.</p>
+    </div>
+  <% } %>
+</div>
+
+<!-- Status Update Modal -->
+<div id="statusModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center">
+  <div class="bg-white rounded-lg p-6 w-full max-w-md">
+    <h3 class="text-xl font-semibold mb-4">Update Order Status</h3>
+    <form id="statusForm" class="space-y-4">
+      <input type="hidden" id="orderId" name="orderId">
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Status</label>
+        <select name="orderStatus" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+          <option value="ordered">Ordered</option>
+          <option value="processing">Processing</option>
+          <option value="shipped">Shipped</option>
+          <option value="delivered">Delivered</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Tracking Number</label>
+        <input type="text" name="trackingNumber" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Expected Delivery Date</label>
+        <input type="date" name="deliveryDate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+      </div>
+      <div class="flex justify-end space-x-4">
+        <button type="button" onclick="closeStatusModal()" class="px-4 py-2 text-gray-600 hover:text-gray-800">
+          Cancel
+        </button>
+        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+          Update
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+function updateOrderStatus(orderId) {
+  document.getElementById('orderId').value = orderId;
+  document.getElementById('statusModal').classList.remove('hidden');
+  document.getElementById('statusModal').classList.add('flex');
+}
+
+function closeStatusModal() {
+  document.getElementById('statusModal').classList.add('hidden');
+  document.getElementById('statusModal').classList.remove('flex');
+}
+
+document.getElementById('statusForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  const orderId = formData.get('orderId');
+  
+  try {
+    const response = await fetch(/api/orders/${orderId}/status, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        orderStatus: formData.get('orderStatus'),
+        trackingNumber: formData.get('trackingNumber'),
+        deliveryDate: formData.get('deliveryDate'),
+      }),
+    });
+
+    if (response.ok) {
+      window.location.reload();
+    } else {
+      alert('Failed to update order status');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    alert('An error occurred while updating the order status');
+  }
+});
+
+// Filter form submission
+document.getElementById('filterForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  const params = new URLSearchParams(formData);
+  window.location.href = /admin/orders?${params.toString()};
+});
+</script>
+
+<%- include('../partials/footer') %>
