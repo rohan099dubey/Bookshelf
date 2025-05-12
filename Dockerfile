@@ -13,11 +13,9 @@ COPY . .
 
 # Set environment variables
 ENV NODE_ENV=production
-ENV PORT=3000
 
-# Expose the port
+# Expose the port - Railway will set the actual PORT at runtime
 EXPOSE 3000
 
 # Start the application
-CMD ["node", "app.js"]
-
+CMD ["node", "app.js"] 
